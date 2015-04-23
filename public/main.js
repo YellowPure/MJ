@@ -3,8 +3,11 @@ $(function() {
 	$('.chat').hide();
 
 	var socket = io();
+	var chat={
+		roomId:null
+	}
 	$('form').submit(function() {
-		socket.emit('new message', $('#m').val());
+		socket.emit('new message', {msg:$('#m').val(),roomId:chat.roomId});
 		$('#m').val('');
 		return false;
 	});
@@ -17,11 +20,12 @@ $(function() {
 	});
 	socket.on('login',function(data){
 		console.log('welcome');
-		$('#messages').append($('<li>').text('welcome! there are '+data.numUsers + 'people in the room'));
+		chat.roomId=data.roomId;
+		$('#messages').append($('<li>').text('welcome! there are '+data.numUsers + 'people in the room,roomId:'+data.roomId));
 	});
 	socket.on('user join', function(data) {
 		console.log(data);
-		$('#messages').append($('<li>').text(data.username+' join the room, '+data.numUsers + 'people in the room'));
+		$('#messages').append($('<li>').text(data.username+' join the room, '+data.numUsers + 'people in the room__roomId:'+data.roomId));
 	});
 	socket.on('new message', function(data) {
 		console.log('new messages123');

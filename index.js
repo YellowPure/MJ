@@ -4,7 +4,6 @@ var server=require('http').createServer(app);
 var io=require('socket.io')(server);
 var port=process.env.PORT||3000;
 
-
 server.listen(port,function(){
 	console.log('listening on %d',port);
 })
@@ -14,14 +13,19 @@ app.use(express.static(__dirname+'/public'));
 //chat room
 var usernames={};
 var numUsers=0;
+var chat=require('./chat');
+chat=Object.create(new Chat());
+
+var roomIdPool=[];
 
 io.on('connection',function(socket){
 	var addUsers=false;
 
 	socket.on('new message',function(data){
-		io.emit('new message',{
+		console.log(data,'get message');
+		io.to(data.roomId).emit('new message',{
 			username:socket.username,
-			message:data
+			message:data.msg
 		});
 	});
 	
@@ -31,9 +35,13 @@ io.on('connection',function(socket){
 			usernames[username]=username;
 			addUsers=true;
 			++numUsers;
-			socket.emit('login',{numUsers:numUsers});
-			console.log(numUsers,username,'user join');
-			socket.broadcast.emit('user join',{numUsers:numUsers,username:username});
+
+			
+			var curRoomId=updateRoomPoolByUsers();
+			socket.join(curRoomId.toString());
+			socket.emit('login',{numUsers:numUsers,roomId:curRoomId});
+			console.log(numUsers,username,curRoomId,'user join');
+			socket.broadcast.to(curRoomId.toString()).emit('user join',{roomId:curRoomId,numUsers:numUsers,username:username});
 		}
 	});
 
@@ -47,3 +55,16 @@ io.on('connection',function(socket){
 		}
 	});
 })
+
+function updateRoomPoolByUsers(){
+	var len=Math.ceil(numUsers/4);
+	roomIdPool=[];
+	var num=10000;
+	for (var i = 0; i < len; i++) {
+		roomIdPool.push(num.toString());
+		num++;
+	}
+	return 10000+(len-1);
+}
+
+
