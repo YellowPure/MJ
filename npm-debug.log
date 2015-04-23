@@ -1,0 +1,207 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', '-g', 'express@4.10.2' ]
+2 info using npm@2.7.4
+3 info using node@v0.12.2
+4 silly cache add args [ 'express@4.10.2', null ]
+5 verbose cache add spec express@4.10.2
+6 silly cache add parsed spec { raw: 'express@4.10.2',
+6 silly cache add   scope: null,
+6 silly cache add   name: 'express',
+6 silly cache add   rawSpec: '4.10.2',
+6 silly cache add   spec: '4.10.2',
+6 silly cache add   type: 'version' }
+7 verbose addNamed express@4.10.2
+8 silly addNamed semver.valid 4.10.2
+9 silly addNamed semver.validRange 4.10.2
+10 silly mapToRegistry name express
+11 silly mapToRegistry using default registry
+12 silly mapToRegistry registry https://registry.npmjs.org/
+13 silly mapToRegistry uri https://registry.npmjs.org/express
+14 verbose addNameVersion registry:https://registry.npmjs.org/express not in flight; fetching
+15 verbose request uri https://registry.npmjs.org/express
+16 verbose request no auth needed
+17 info attempt registry request try #1 at 23:55:00
+18 verbose request id ba38ef2d6e0e0e2b
+19 http request GET https://registry.npmjs.org/express
+20 http 200 https://registry.npmjs.org/express
+21 silly get cb [ 200,
+21 silly get   { date: 'Wed, 22 Apr 2015 15:55:01 GMT',
+21 silly get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+21 silly get     etag: '"CD0RNE5TLG2ZA8P8Y9NW8G03I"',
+21 silly get     'content-type': 'application/json',
+21 silly get     'cache-control': 'max-age=60',
+21 silly get     'content-length': '492556',
+21 silly get     'accept-ranges': 'bytes',
+21 silly get     via: '1.1 varnish',
+21 silly get     age: '34',
+21 silly get     'x-served-by': 'cache-nrt6131-NRT',
+21 silly get     'x-cache': 'HIT',
+21 silly get     'x-cache-hits': '2',
+21 silly get     'x-timer': 'S1429718101.224498,VS0,VE0',
+21 silly get     vary: 'Accept',
+21 silly get     'keep-alive': 'timeout=10, max=50',
+21 silly get     connection: 'Keep-Alive' } ]
+22 verbose get saving express to /Users/huangliang01/.npm/registry.npmjs.org/express/.cache.json
+23 verbose getCacheStat cache creation not in flight; initializing
+24 silly mapToRegistry name express
+25 silly mapToRegistry using default registry
+26 silly mapToRegistry registry https://registry.npmjs.org/
+27 silly mapToRegistry uri https://registry.npmjs.org/express
+28 verbose addRemoteTarball https://registry.npmjs.org/express/-/express-4.10.2.tgz not in flight; adding
+29 verbose addRemoteTarball [ 'https://registry.npmjs.org/express/-/express-4.10.2.tgz',
+29 verbose addRemoteTarball   'df06dde94d968932829d440a2004c5efe64495b0' ]
+30 info retry fetch attempt 1 at 23:55:05
+31 info attempt registry request try #1 at 23:55:05
+32 http fetch GET https://registry.npmjs.org/express/-/express-4.10.2.tgz
+33 http fetch 200 https://registry.npmjs.org/express/-/express-4.10.2.tgz
+34 silly fetchAndShaCheck shasum df06dde94d968932829d440a2004c5efe64495b0
+35 verbose addTmpTarball /var/folders/13/b1hvx3nx0yxc12xt52s2dhbr0000gn/T/npm-3636-cddd4717/registry.npmjs.org/express/-/express-4.10.2.tgz not in flight; adding
+36 verbose addTmpTarball already have metadata; skipping unpack for express@4.10.2
+37 silly cache afterAdd express@4.10.2
+38 verbose afterAdd /Users/huangliang01/.npm/express/4.10.2/package/package.json not in flight; writing
+39 verbose afterAdd /Users/huangliang01/.npm/express/4.10.2/package/package.json written
+40 silly install resolved [ { name: 'express',
+40 silly install resolved     description: 'Fast, unopinionated, minimalist web framework',
+40 silly install resolved     version: '4.10.2',
+40 silly install resolved     author: { name: 'TJ Holowaychuk', email: 'tj@vision-media.ca' },
+40 silly install resolved     contributors:
+40 silly install resolved      [ [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object] ],
+40 silly install resolved     license: 'MIT',
+40 silly install resolved     repository: { type: 'git', url: 'https://github.com/strongloop/express' },
+40 silly install resolved     homepage: 'http://expressjs.com/',
+40 silly install resolved     keywords:
+40 silly install resolved      [ 'express',
+40 silly install resolved        'framework',
+40 silly install resolved        'sinatra',
+40 silly install resolved        'web',
+40 silly install resolved        'rest',
+40 silly install resolved        'restful',
+40 silly install resolved        'router',
+40 silly install resolved        'app',
+40 silly install resolved        'api' ],
+40 silly install resolved     dependencies:
+40 silly install resolved      { accepts: '~1.1.3',
+40 silly install resolved        'content-disposition': '0.5.0',
+40 silly install resolved        'cookie-signature': '1.0.5',
+40 silly install resolved        debug: '~2.1.0',
+40 silly install resolved        depd: '~1.0.0',
+40 silly install resolved        'escape-html': '1.0.1',
+40 silly install resolved        etag: '~1.5.0',
+40 silly install resolved        finalhandler: '0.3.2',
+40 silly install resolved        fresh: '0.2.4',
+40 silly install resolved        'media-typer': '0.3.0',
+40 silly install resolved        methods: '1.1.0',
+40 silly install resolved        'on-finished': '~2.1.1',
+40 silly install resolved        parseurl: '~1.3.0',
+40 silly install resolved        'path-to-regexp': '0.1.3',
+40 silly install resolved        'proxy-addr': '~1.0.3',
+40 silly install resolved        qs: '2.3.2',
+40 silly install resolved        'range-parser': '~1.0.2',
+40 silly install resolved        send: '0.10.1',
+40 silly install resolved        'serve-static': '~1.7.1',
+40 silly install resolved        'type-is': '~1.5.3',
+40 silly install resolved        vary: '~1.0.0',
+40 silly install resolved        cookie: '0.1.2',
+40 silly install resolved        'merge-descriptors': '0.0.2',
+40 silly install resolved        'utils-merge': '1.0.0' },
+40 silly install resolved     devDependencies:
+40 silly install resolved      { after: '0.8.1',
+40 silly install resolved        istanbul: '0.3.2',
+40 silly install resolved        mocha: '~2.0.0',
+40 silly install resolved        should: '~4.2.1',
+40 silly install resolved        supertest: '~0.14.0',
+40 silly install resolved        ejs: '~1.0.0',
+40 silly install resolved        marked: '0.3.2',
+40 silly install resolved        hjs: '~0.0.6',
+40 silly install resolved        'body-parser': '~1.9.1',
+40 silly install resolved        'connect-redis': '~2.1.0',
+40 silly install resolved        'cookie-parser': '~1.3.3',
+40 silly install resolved        'express-session': '~1.9.1',
+40 silly install resolved        jade: '~1.7.0',
+40 silly install resolved        'method-override': '~2.3.0',
+40 silly install resolved        morgan: '~1.4.1',
+40 silly install resolved        multiparty: '~4.0.0',
+40 silly install resolved        vhost: '~3.0.0' },
+40 silly install resolved     engines: { node: '>= 0.10.0' },
+40 silly install resolved     files: [ 'LICENSE', 'History.md', 'Readme.md', 'index.js', 'lib/' ],
+40 silly install resolved     scripts:
+40 silly install resolved      { test: 'mocha --require test/support/env --reporter spec --bail --check-leaks test/ test/acceptance/',
+40 silly install resolved        'test-cov': 'istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks test/ test/acceptance/',
+40 silly install resolved        'test-tap': 'mocha --require test/support/env --reporter tap --check-leaks test/ test/acceptance/',
+40 silly install resolved        'test-travis': 'istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks test/ test/acceptance/' },
+40 silly install resolved     gitHead: 'ac56cf46063e461fbaf53c2c869a1a657e8adbe1',
+40 silly install resolved     bugs: { url: 'https://github.com/strongloop/express/issues' },
+40 silly install resolved     _id: 'express@4.10.2',
+40 silly install resolved     _shasum: 'df06dde94d968932829d440a2004c5efe64495b0',
+40 silly install resolved     _from: 'express@4.10.2',
+40 silly install resolved     _npmVersion: '1.4.21',
+40 silly install resolved     _npmUser: { name: 'dougwilson', email: 'doug@somethingdoug.com' },
+40 silly install resolved     maintainers:
+40 silly install resolved      [ [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object],
+40 silly install resolved        [Object] ],
+40 silly install resolved     dist:
+40 silly install resolved      { shasum: 'df06dde94d968932829d440a2004c5efe64495b0',
+40 silly install resolved        tarball: 'http://registry.npmjs.org/express/-/express-4.10.2.tgz' },
+40 silly install resolved     directories: {},
+40 silly install resolved     _resolved: 'https://registry.npmjs.org/express/-/express-4.10.2.tgz' } ]
+41 info install express@4.10.2 into /usr/local/lib
+42 info installOne express@4.10.2
+43 verbose installOne of express to /usr/local/lib not in flight; installing
+44 verbose lock using /Users/huangliang01/.npm/_locks/express-59b5b7164c5e2658.lock for /usr/local/lib/node_modules/express
+45 silly install write writing express 4.10.2 to /usr/local/lib/node_modules/express
+46 silly cache addNamed cb express@4.10.2
+47 verbose unbuild lib/node_modules/express
+48 silly gentlyRm /usr/local/lib/node_modules/express is being purged from base /usr/local
+49 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/express
+50 verbose tar unpack /Users/huangliang01/.npm/express/4.10.2/package.tgz
+51 verbose tar unpacking to /usr/local/lib/node_modules/express
+52 silly gentlyRm /usr/local/lib/node_modules/express is being purged
+53 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/express
+54 silly gunzTarPerm modes [ '755', '644' ]
+55 error tar.unpack untar error /Users/huangliang01/.npm/express/4.10.2/package.tgz
+56 verbose unlock done using /Users/huangliang01/.npm/_locks/express-59b5b7164c5e2658.lock for /usr/local/lib/node_modules/express
+57 verbose fstream_path /usr/local/lib/node_modules/express
+58 verbose fstream_type Directory
+59 verbose fstream_class DirWriter
+60 verbose stack Error: EACCES, mkdir '/usr/local/lib/node_modules/express'
+60 verbose stack     at Error (native)
+61 verbose fstream_stack /usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+61 verbose fstream_stack /usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+61 verbose fstream_stack FSReqWrap.oncomplete (fs.js:95:15)
+62 verbose cwd /Users/huangliang01/MJ
+63 error Darwin 14.3.0
+64 error argv "node" "/usr/local/bin/npm" "install" "-g" "express@4.10.2"
+65 error node v0.12.2
+66 error npm  v2.7.4
+67 error path /usr/local/lib/node_modules/express
+68 error code EACCES
+69 error errno -13
+70 error Error: EACCES, mkdir '/usr/local/lib/node_modules/express'
+70 error     at Error (native)
+70 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules/express']
+70 error   errno: -13,
+70 error   code: 'EACCES',
+70 error   path: '/usr/local/lib/node_modules/express',
+70 error   fstream_type: 'Directory',
+70 error   fstream_path: '/usr/local/lib/node_modules/express',
+70 error   fstream_class: 'DirWriter',
+70 error   fstream_stack:
+70 error    [ '/usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+70 error      '/usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+70 error      'FSReqWrap.oncomplete (fs.js:95:15)' ] }
+71 error Please try running this command again as root/Administrator.
+72 verbose exit [ -13, true ]
+73 verbose unbuild lib/node_modules/express
+74 silly gentlyRm /usr/local/lib/node_modules/express is being purged from base /usr/local
+75 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/express
