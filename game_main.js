@@ -31,11 +31,11 @@ GameMain.prototype.setPlayerReady = function (name) {
 			global.roomPlayers[this.roomId][i].ready = true;
 		}
 	}
-	var ableToStart = this.checkToStartGame();
-	if (ableToStart == true) {
-		console.log('123');
-		this.countDown();
-	}
+//	var ableToStart = this.checkToStartGame();
+//	if (ableToStart == true) {
+//		console.log('count down!');
+//		this.countDown();
+//	}
 }
 GameMain.prototype.setPlayerNotReady = function (name) {
 	for (var i = 0; i < global.roomPlayers[this.roomId].length; i++) {
@@ -67,12 +67,15 @@ GameMain.prototype.checkToStartGame = function () {
 	console.log('all player in!!', pass);
 	return pass;
 }
-GameMain.prototype.countDown = function () {
+GameMain.prototype.countDown = function (callback) {
 	var self = this;
 	console.log('count down', this.roomId);
 	global.io_obj.to(this.roomId).emit('count down');
 	setTimeout(function () {
-		self.startGame();
+		if(callback&&typeof callback =="function"){
+			callback();
+		}
+//		self.startGame();
 	}, 3000);
 }
 GameMain.prototype.startGame = function () {
@@ -172,7 +175,7 @@ GameMain.prototype.gang = function (card_one, card_two, card_three) {
 		global.io_obj.to(this.roomId).emit('not able gane', { error: '不满足条件' });
 	}
 }
-GameMain.prototype.check_gang = funciton(){
+GameMain.prototype.check_gang = function(){
 	var _check = {};
 	var _indexArr = [];
 	this.card_list.forEach(function (val, index) {
@@ -187,7 +190,7 @@ GameMain.prototype.check_gang = funciton(){
 		if (val.length == 4) {
 			return true;
 		}
-	})
+	});
 	return false;
 }
 GameMain.prototype.hu = function () {

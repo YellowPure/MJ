@@ -85,6 +85,12 @@ io.on('connection', function(socket) {
 	socket.on('ready', function(data) {
 		console.log("I'm ready!");
 		gameMain.setPlayerReady(data.username);
+		if(gameMain.checkToStartGame()==true){
+			gameMain.countDown(function(){
+				gameMain.startGame();
+				turnNextPlayer(global.roomPlayer[socket.roomId],0);
+			});
+		}
 		io.to(data.roomId).emit('player ready', {
 			username: data.username
 		});
@@ -96,8 +102,11 @@ io.on('connection', function(socket) {
 			username: data.username
 		});
 	});
+});
 
-})
+function turnNextPlayer(player_list,index){
+	
+}
 
 function addPlayersToRoom(curRoomId, username) {
 	var curRoomId = curRoomId || null;

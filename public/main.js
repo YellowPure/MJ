@@ -1,5 +1,5 @@
 $(function() {
-	$('.login').show();
+	$('.login').hide();
 	$('.game').hide();
 	$('.player').hide();
 
