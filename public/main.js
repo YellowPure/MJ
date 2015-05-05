@@ -1,3 +1,11 @@
+var io=function(){
+	var socket={
+		on:function(){
+			
+		}
+	}
+	return socket;
+}
 $(function() {
 	$('.login').hide();
 	$('.game').hide();

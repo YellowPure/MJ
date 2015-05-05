@@ -1,87 +1,72 @@
-function Card(x, y, width, height, ctx, text) {
-	this.x = x;
-	this.y = y;
-	this.width = width;
-	this.height = height;
-	this.ctx = ctx;
-	this.text = text;
+function Card(option) {
+	this.x = option.x;
+	this.y = option.y;
+	this.width = option.width;
+	this.height = option.height;
+	this.name = option.name;
+	this.card_id = option.card_id;
+	this.card_view = new createjs.Container();
+	this.card_view.x = option.x;
+	this.card_view.y = option.y;
+	this.bg=new createjs.Shape();
+	this.text=new createjs.Text(option.text,"10px Microsoft Yahei", "#ff7000");
+	this.text.lineWidth = this.width;
+	this.text.visible=false;
+	this.card_view.addChild(this.bg);
+	this.card_view.addChild(this.text);
+	this.info = option;
 	this.draw();
+	this.bindEvent();
 }
-Card.prototype.draw = function () {
-	var roundedRect = function (ctx, x, y, width, height, radius) {
-		ctx.beginPath();
-		ctx.moveTo(x, y + radius);
-		ctx.lineTo(x, y + height - radius);
-		ctx.quadraticCurveTo(x, y + height, x + radius, y + height);
-		ctx.lineTo(x + width - radius, y + height);
-		ctx.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
-		ctx.lineTo(x + width, y + radius);
-		ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
-		ctx.lineTo(x + radius, y);
-		ctx.quadraticCurveTo(x, y, x, y + radius);
-		
+Card.prototype.bindEvent = function() {
+	var self = this;
+
+	function handlerComplete() {
+		self.info.side = 1;
+		self.draw();
+	};
+	this.card_view.addEventListener('click', function(event) {
+		// console.log(self.name,event);
+		createjs.Tween.get(self.card_view).to({
+			y: 200},1000
+		).call(handlerComplete);
+	});
+}
+Card.prototype.draw = function() {
+	this.bg.graphics.clear();
+	if (this.info.side == 1) { //正面
+		this.bg.graphics.beginStroke("#000").drawRect(0, 0, this.width, this.height);
+		this.text.visible=true;
+	} else if (this.info.side == 2) { //反面
+		this.bg.graphics.beginStroke('#000').drawRect(0, 0, this.width, this.height);
+
+		this.bg.graphics.beginFill("#f00").drawRect(1, 1, this.width - 1, this.height - 1);
+		this.text.visible=false;
 	}
-	roundedRect(this.ctx, this.x, this.y, this.width, this.height, 2);
-	var textField_x = this.x + this.width / 2;
-	var textField_y = this.y + this.height / 2 - 2;
-	this.ctx.font = "10px Arial";;
-	this.ctx.textAlign = "center";
-//	this.ctx.fillStyle = "#f00";
-	for (var index = 0; index < this.text.length; index++) {
-		var element = this.text.charAt(index);
-		this.ctx.fillText(element, textField_x, textField_y + (index) * 10);
-	}
-	this.ctx.stroke();
-//	console.log(this.width);
-	
-//	this.ctx.fill();
-	
+
 }
 var view = {
-	canvas: null,
-	ctx: null,
-	init: function () {
-		this.canvas = document.getElementById('game_view');
-		this.ctx = this.canvas.getContext('2d');
-		this.bindEvent();
-		this.render();
-	},
-	bindEvent: function () {
-		var self=this;
-		this.canvas.addEventListener('click', function (ev) {
-			var pos=self.getEventPosition(ev);
-			console.log(pos);
-			if(self.ctx.isPointInPath(pos.x,pos.y)){
-				console.log('click!!')
-			}
-		}, false);
-	},
-	getEventPosition: function (ev) {
-		var x, y;
-		if (ev.layerX || ev.layerX == 0) {
-			x = ev.layerX;
-			y = ev.layerY;
-		} else if (ev.offsetX || ev.offsetX == 0) { // Opera
-			x = ev.offsetX;
-			y = ev.offsetY;
-		}
-		return { x: x, y: y };
-	},
-	render: function () {
-		//		this.renderOneCard();
-		for (var index = 0; index < 13; index++) {
-			var a = new Card(100 + index * 40, 100, 30, 40, this.ctx, "一万");
-		}
 
-	},
-	renderOneCard: function (x, y) {
-		this.roundedRect(this.ctx, 100, 100, 30, 40, 2);
-		this.ctx.font = "10px Arial";
-		this.ctx.textAlign = 'left';
-		this.ctx.fillStyle = '#f00';
-		this.ctx.fillText('yi_wan', 0, 20);
-	},
+	init: function() {
+		var stage = new createjs.Stage('game_view');
+		for (var i = 0; i < 13; i++) {
+			var card = new Card({
+				name: 'card' + i,
+				x: 100 + i * 32,
+				y: 100,
+				width: 30,
+				height: 40,
+				card_id: 1,
+				text: '1 wam',
+				side: 2
+			});
+			stage.addChild(card.card_view);
+		};
 
+		createjs.Ticker.addEventListener('tick', function() {
+			stage.update();
+		});
 
+	}
 }
 view.init();

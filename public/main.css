@@ -76,3 +76,4 @@ form.chat_form button { width: 19%; background: rgb(130, 224, 255); border: none
             opacity: 0;
       }
 }
+#game_view{position: absolute;left: 0;top: 0;}
