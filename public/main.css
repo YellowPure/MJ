@@ -77,3 +77,5 @@ form.chat_form button { width: 19%; background: rgb(130, 224, 255); border: none
       }
 }
 #game_view{position: absolute;left: 0;top: 0;}
+#action_box{position: absolute;right: 0;bottom:50px;}
+#action_box button{width: 32px;height:32px;border-radius: 4px;}

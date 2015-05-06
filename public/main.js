@@ -1,16 +1,9 @@
-var io=function(){
-	var socket={
-		on:function(){
-			
-		}
-	}
-	return socket;
-}
 $(function() {
-	$('.login').hide();
+	$('.login').show();
 	$('.game').hide();
 	$('.player').hide();
-
+	$('#game_view').hide();
+	$('#action_box').hide();
 	var socket = io();
 	var Global={
 		roomId:null,
@@ -135,10 +128,25 @@ $(function() {
 			}
 		},1000);
 	});
-	socket.on('start game',function(){
-		console.log('start game');
+	socket.on('start game',function(data){
+		console.log('start game get cards',data.card_list);
+		$('#game_view').show();
+//		game_data.init({card_list:data.card_list});
+		view.init();
+		view.setData({card_list:data.card_list});
 	});
-
+	socket.on('player turn',function(data){
+		console.log(data.name,'player turn');
+		if(Global.username===data.name){
+			//check是本玩家
+			$('#action_box').show(200);
+			$('.player1').hide(200);
+		}else{
+			if($('#action_box').is(":visibled")){
+				$('#action_box').hide();
+			}
+		}
+	});	
 	function countDown(num){
 		if($('.count_down').length==0){
 			$('body').append('<h1 class="count_down">'+num.toString()+'</h1>');

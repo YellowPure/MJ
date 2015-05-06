@@ -37,6 +37,17 @@ GameMain.prototype.setPlayerReady = function (name) {
 //		this.countDown();
 //	}
 }
+GameMain.prototype.setCurPlayerByData=function(data){
+	var self=this;
+	var arr=global.roomPlayer(self.roomId);
+	var index=arr.indexOf(data.username);
+	
+}
+GameMain.prototype.turnNextPlayer=function(){
+	var self=this;
+	var arr=global.roomPlayer(self.roomId);
+	var index=arr.indexOf();
+}
 GameMain.prototype.setPlayerNotReady = function (name) {
 	for (var i = 0; i < global.roomPlayers[this.roomId].length; i++) {
 		if (global.roomPlayers[this.roomId][i].username == name) {
@@ -55,7 +66,8 @@ GameMain.prototype.getPlayerInfoByName = function (playerName) {
 }
 GameMain.prototype.checkToStartGame = function () {
 	var pass = true;
-	if (global.roomPlayers[this.roomId].length == 4) {
+	var limit_num=1;//debug:1;  build:4
+	if (global.roomPlayers[this.roomId].length == limit_num) {
 		for (var i = 0; i < global.roomPlayers[this.roomId].length; i++) {
 			if (global.roomPlayers[this.roomId][i].ready == false) {
 				pass = false;
@@ -75,14 +87,13 @@ GameMain.prototype.countDown = function (callback) {
 		if(callback&&typeof callback =="function"){
 			callback();
 		}
-//		self.startGame();
 	}, 3000);
 }
 GameMain.prototype.startGame = function () {
 	this.game_state = 'GAME_START';
-	global.io_obj.to(this.roomId).emit('start game');
 	this.getCards();
-	this.getOneCard();
+//	this.getOneCard();
+	global.io_obj.to(this.roomId).emit('start game',{card_list:this.card_list});
 }
 GameMain.prototype.getCards = function () {
 	this.card_list = mj_list.dealCards(this.roomId);
@@ -113,7 +124,7 @@ GameMain.prototype.throwOneCard = function (card) {
 }
 GameMain.prototype.getOneCard = function (card) {
 	var card = mj_list.dealOneCard(this.roomId);
-	this.list.push(card);
+	this.card_list.push(card);
 }
 GameMain.prototype.chi = function (card_one, card_two) {
 	var match_card = table.lastCard();

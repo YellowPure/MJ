@@ -88,7 +88,7 @@ io.on('connection', function(socket) {
 		if(gameMain.checkToStartGame()==true){
 			gameMain.countDown(function(){
 				gameMain.startGame();
-				turnNextPlayer(global.roomPlayer[socket.roomId],0);
+				turnNextPlayer(global.roomPlayers[socket.roomId],0);
 			});
 		}
 		io.to(data.roomId).emit('player ready', {
@@ -102,11 +102,28 @@ io.on('connection', function(socket) {
 			username: data.username
 		});
 	});
+	socket.on('turn one player',function(data){
+		console.log(" now one player moving",data);
+		var _index=getIndexByName(data.username);
+		turnNextPlayer(global.roomPlayers[socket.roomId],_index);
+	});
 });
 
-function turnNextPlayer(player_list,index){
-	
+function getIndexByName(name){
+	var arr=global.roomPlayers[global.socket_obj.roomId];
+	arr.forEach(function(val,index){
+		if(val.username==name){
+			return index;
+		}
+	})
+	return -1;
 }
+
+function turnNextPlayer(player_list,index){
+	console.log(index," _player turn on");
+	io.to(global.socket_obj.roomId).emit('player turn',{name:player_list[index].username});
+}
+
 
 function addPlayersToRoom(curRoomId, username) {
 	var curRoomId = curRoomId || null;
@@ -114,7 +131,7 @@ function addPlayersToRoom(curRoomId, username) {
 	if (curRoomId && username) {
 		var roomId=curRoomId.toString();
 		if(global.roomPlayers[roomId]==undefined){
-			global.roomPlayers[roomId]=new Array()
+			global.roomPlayers[roomId]=new Array();
 		}
 		global.roomPlayers[roomId].push({username:username,ready:false});
 	}
