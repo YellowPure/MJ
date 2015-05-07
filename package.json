@@ -1,6 +1,9 @@
 {
 	"name":"MJ",
-	"version":"0.1",
+	"version":"0.0.1",
 	"description":"Ma jiang",
-	"dependencies":{}
+	"dependencies":{
+		"express":"4.12.3",
+		"socket.io":"*"
+	}
 }

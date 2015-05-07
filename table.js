@@ -1,7 +1,11 @@
 var table={
 	list:{},
 	addCard:function(roomId,card_name){
+		if(this.list[roomId]==undefined){
+			this.list[roomId]=new Array();
+		}
 		this.list[roomId].push(card_name);
+		global.socket_obj.emit('talbe add card',{card_name:card_name});
 	},
 	delCard:function(roomId,card_name){
 		if(this.list[roomId].length>0){

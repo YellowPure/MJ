@@ -95,6 +95,12 @@ io.on('connection', function(socket) {
 			username: data.username
 		});
 	});
+	socket.on('throw',function(data){
+		console.log('throw!');
+		if(data.card_name){
+			gameMain.throwOneCard(data.card_name);
+		}
+	});
 	socket.on('not ready', function(data) {
 		console.log("I'm not ready!");
 		gameMain.setPlayerNotReady(data.username);

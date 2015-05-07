@@ -31,11 +31,6 @@ GameMain.prototype.setPlayerReady = function (name) {
 			global.roomPlayers[this.roomId][i].ready = true;
 		}
 	}
-//	var ableToStart = this.checkToStartGame();
-//	if (ableToStart == true) {
-//		console.log('count down!');
-//		this.countDown();
-//	}
 }
 GameMain.prototype.setCurPlayerByData=function(data){
 	var self=this;
@@ -92,7 +87,7 @@ GameMain.prototype.countDown = function (callback) {
 GameMain.prototype.startGame = function () {
 	this.game_state = 'GAME_START';
 	this.getCards();
-//	this.getOneCard();
+	this.card_list.sort();
 	global.io_obj.to(this.roomId).emit('start game',{card_list:this.card_list});
 }
 GameMain.prototype.getCards = function () {
@@ -106,21 +101,14 @@ GameMain.prototype.throwOneCard = function (name) {
 	var _index = this.card_list.indexOf(name);
 	if (_index != -1) {
 		this.card_list.splice(_index, 1);
+		table.addCard(this.roomId, name);
 	}
-	table.addCard(this.roomId, name);
 }
 GameMain.prototype.pauseGame = function () {
 	this.game_state = "GAME_PAUSE";
 }
 GameMain.prototype.endGame = function () {
 	this.game_state = "GAME_END";
-}
-GameMain.prototype.throwOneCard = function (card) {
-	var index = this.card_list.indexOf(card);
-	if (index != -1) {
-		table.addCard(this.roomId, this.card_list[index]);
-		this.card_list.splice(index, 1);
-	}
 }
 GameMain.prototype.getOneCard = function (card) {
 	var card = mj_list.dealOneCard(this.roomId);
@@ -150,7 +138,7 @@ GameMain.prototype.chi = function (card_one, card_two) {
 		//符合吃的条件
 		//		global.io_obj.to(this.roomId).emit('chi',{card:match_card});
 	} else {
-		global.io_obj.to(this.roomId).emit('not able chi', { error: '不满足条件' });
+		global.socket_obj.emit('not able chi', { error: '不满足条件' });
 	}
 }
 GameMain.prototype.peng = function (card_one, card_two) {
@@ -165,7 +153,7 @@ GameMain.prototype.peng = function (card_one, card_two) {
 	if (same_num && same_type) {
 		//满足碰的条件
 	} else {
-		global.io_obj.to(this.roomId).emit('not able peng', { error: '不满足条件' });
+		global.socket_obj.emit('not able peng', { error: '不满足条件' });
 	}
 }
 

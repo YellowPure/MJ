@@ -11,7 +11,8 @@ var view = {
 
 		var stage = new createjs.Stage('game_view');
 		this.table = new Table();
-
+		Global.table=this.table;
+		
 		stage.addChild(this.table.table_view);
 		stage.enableMouseOver(10);
 		this.stage = stage;
