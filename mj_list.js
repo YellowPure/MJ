@@ -39,7 +39,8 @@ var MJList={
 	},
 	dealOneCard:function(roomId){
 		if(this.list[roomId].length>0){
-			return this.list[roomId].splice(0,1);
+			var item=this.list[roomId].splice(0,1);
+			return item[0];
 		}
 		return null;
 	}

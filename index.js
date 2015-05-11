@@ -113,6 +113,19 @@ io.on('connection', function(socket) {
 		var _index=getIndexByName(data.username);
 		turnNextPlayer(global.roomPlayers[socket.roomId],_index);
 	});
+	socket.on('chi',function(data){
+		console.log("chi card",data);
+	})
+	socket.on('player get one card',function(player_name){
+		global.roomPlayers[socket.roomId].forEach(function(element,index) {
+			if(element.username===player_name){
+				var card=MJList.dealOneCard(socket.roomId);
+				console.log("player get one card",card,element.username);
+				socket.emit('player get one card',{name:element.username,card:card});
+			}
+		}, this);
+		
+	});
 });
 
 function getIndexByName(name){
@@ -126,8 +139,8 @@ function getIndexByName(name){
 }
 
 function turnNextPlayer(player_list,index){
-	console.log(index," _player turn on");
-	io.to(global.socket_obj.roomId).emit('player turn',{name:player_list[index].username});
+	console.log(index," _player turn on",global.socket_obj.roomId);
+	global.socket_obj.emit('player turn',{name:player_list[index].username});
 }
 
 

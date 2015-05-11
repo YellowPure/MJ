@@ -6,6 +6,7 @@ function Table() {
 	this.last_pos={x:0,y:0};
 	this.cards_name_list=[];
 	this.throw_card_count=0;
+	this.throw_card_list=[];
 
 	this.table_hide_view=new createjs.Container();
 	this.table_view.addChild(this.table_hide_view);
@@ -18,6 +19,7 @@ function Table() {
 	this.table_view.addChild(this.table_player_view);
 
 	this.init();
+	this.initControls();
 	this.bindEvent();
 }
 Table.prototype.init = function () {
@@ -44,6 +46,46 @@ Table.prototype.init = function () {
 		this.table_hide_view.addChild(card.card_view);
 	}
 }
+Table.prototype.initControls=function(){
+	var self=this;
+	this.control_view=new createjs.Container();
+	this.control_view.x=750;
+	this.control_view.y=260;
+	this.table_view.addChild(this.control_view);
+	
+	
+	this.initControl_items('chi',0,function(ev){
+		console.log('chi!');
+		socket.emit('chi',{card_name:self.throw_card_list[self.throw_card_list.length-1].txt});
+	});
+	this.initControl_items('peng',38,function(ev){
+		console.log('peng');
+	});
+	this.initControl_items('gang',76,function(ev){
+		console.log('gang');
+	});
+	this.initControl_items('hu',114,function(ev){
+		console.log('hu');
+	})
+}
+Table.prototype.initControl_items=function(txt,pos_x,callback){
+	var  item=new createjs.Container();
+	this.control_view.addChild(item);
+	item.x=pos_x;
+	var control_bg=new createjs.Shape();
+	control_bg.graphics.beginStroke("#000").drawRect(0,0,36,36);
+	control_bg.graphics.beginFill("#fff").drawRect(1,1,35,35);
+	item.addChild(control_bg);
+	var control_chi_txt=new createjs.Text(txt,"14px Microsoft Yahei","#ff7000");
+	item.addChild(control_chi_txt);
+	control_chi_txt.y=8;
+	
+	item.addEventListener('click',function(ev){
+		if(typeof callback === 'function'){
+			callback(ev);
+		}
+	});
+}
 Table.prototype.dealCards=function(){
 	var self=this;
 	self.cards_list=[];
@@ -68,6 +110,7 @@ Table.prototype.animationCards=function(){
 	function handler(ev){
 		if(count>12){
 			self.dealCardsToPlayers();
+			self.getCardFromMachine();
 			return;
 		}
 		createjs.Tween.get(self.cards_list[count].card_view).to({
@@ -84,7 +127,6 @@ Table.prototype.dealCardsToPlayers=function(){
 
 		val.y=0;
 		val.x=62*index;
-		console.log(val,val.getInfo(),'ffffffffffff');
 		var card=new Card(val.getInfo());
 		self.table_player_view.addChild(card.card_view);
 		self.table_hide_view.removeChild(val.card_view);
@@ -102,10 +144,24 @@ Table.prototype.getCardFromPlayer=function(card){
 	var _card=new Card(info);
 	this.table_player_view.removeChild(card.card_view);
 	var _index=this.player_cards_list.indexOf(card);
+	this.throw_card_list.push(this.player_cards_list[_index]);
 	this.player_cards_list.splice(_index,1);
 	this.playerSortCards();
 	this.table_show_view.addChild(_card.card_view);
 	this.throw_card_count++;
+}
+Table.prototype.getCardFromMachine=function(card_name){
+	var self=this;
+	socket.emit("player get one card",Global.username);
+	socket.on("player get one card",function(data){
+		console.log("player get one card",data);
+		var info={x:0,y:0,txt:data.card,side:1,card_id:1000};
+		var _card=new Card(info);
+		self.player_cards_list.push(_card);
+		self.table_player_view.addChild(_card.card_view);
+		self.playerSortCards();
+	});
+	
 }
 Table.prototype.playerSortCards=function(){
 	console.log(this.player_cards_list);
