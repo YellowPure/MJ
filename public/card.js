@@ -1,8 +1,8 @@
 function Card(option) {
 	this.x = option.x;
 	this.y = option.y;
-	this.width = 51;
-	this.height = 68;
+	this.width = parseInt(Global.canvas.width * 0.04);;
+	this.height = parseInt(this.width * 4 / 3);
 	this.name = option.name;
 	this.card_id = option.card_id;
 	this.card_view = new createjs.Container();
@@ -11,7 +11,8 @@ function Card(option) {
 	this.bg=new createjs.Shape();
 	this.txt=option.txt;
 	var str=" "+option.txt;
-	this.text=new createjs.Text(str,"14px Microsoft Yahei", "#ff7000");
+	this.str_size=parseInt(this.width*14/53);
+	this.text=new createjs.Text(str,this.str_size+"px Microsoft Yahei", "#ff7000");
 	//text 换行需要在文本中加入空格
 	this.text.lineWidth = this.width;
 	this.text.y=10;
@@ -37,8 +38,10 @@ Card.prototype.getInfo=function(){
 Card.prototype.bindEvent = function() {
 	var self = this;
 	this.card_view.addEventListener('click',function(event){
-		socket.emit('throw',{card_name:self.txt});
-		Global.table.getCardFromPlayer(self);
+		if(this.side==1){
+			socket.emit('throw',{card_name:self.txt});
+			Global.table.getCardFromPlayer(self);
+		}
 	});
 	this.card_view.addEventListener('rollover', function(event) {
 		if(self.side==1){
