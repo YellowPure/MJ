@@ -2,7 +2,9 @@ var socket = io();
 var Global = {
 	roomId: null,
 	username: null,
-	player_name_list: null
+	player_name_list: null,
+	table:null,
+	canvas:null
 }
 $(function() {
 	$('.login').show();

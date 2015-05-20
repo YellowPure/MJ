@@ -7,14 +7,17 @@ function Table() {
 	this.cards_name_list=[];
 	this.throw_card_count=0;
 	this.throw_card_list=[];
+	this.row_card_width=53;
+	this.row_card_height=68;
 
 	this.table_hide_view=new createjs.Container();
 	this.table_view.addChild(this.table_hide_view);
+	this.table_hide_view.y=parseInt(Global.canvas.height/2)-34;
 	this.table_show_view= new createjs.Container();
-	this.table_show_view.y=80;
+	this.table_show_view.y=0;
 	this.table_view.addChild(this.table_show_view);
 	this.table_player_view=new createjs.Container();
-	this.table_player_view.y=300;
+	this.table_player_view.y= Global.canvas.height-this.row_card_height;
 
 	this.table_view.addChild(this.table_player_view);
 
@@ -32,7 +35,7 @@ Table.prototype.init = function () {
 		} else {
 			_y = 40;
 		}
-		_x = parseInt(i / 2) * 62;
+		_x = parseInt(i / 2) * this.row_card_width;
 		var card = new Card({
 			name: 'card' + i,
 			x: _x,
@@ -114,7 +117,7 @@ Table.prototype.animationCards=function(){
 			return;
 		}
 		createjs.Tween.get(self.cards_list[count].card_view).to({
-		x:62*count,
+		x:self.row_card_width*count,
 		y:300},200).call(handler);
 		count++;
 	}
@@ -126,7 +129,7 @@ Table.prototype.dealCardsToPlayers=function(){
 		val.side=1;
 
 		val.y=0;
-		val.x=62*index;
+		val.x=self.row_card_width*index;
 		var card=new Card(val.getInfo());
 		self.table_player_view.addChild(card.card_view);
 		self.table_hide_view.removeChild(val.card_view);
@@ -139,8 +142,8 @@ Table.prototype.bindEvent=function(){
 }
 Table.prototype.getCardFromPlayer=function(card){
 	var info=card.getInfo();
-	info.x=62*this.throw_card_count;
-	info.y=100;
+	info.x=this.row_card_width*this.throw_card_count;
+//	info.y=100;
 	var _card=new Card(info);
 	this.table_player_view.removeChild(card.card_view);
 	var _index=this.player_cards_list.indexOf(card);
@@ -166,6 +169,6 @@ Table.prototype.getCardFromMachine=function(card_name){
 Table.prototype.playerSortCards=function(){
 	console.log(this.player_cards_list);
 	for (var i = 0; i < this.player_cards_list.length; i++) {
-		this.player_cards_list[i].card_view.x=i*62;
+		this.player_cards_list[i].card_view.x=i*this.row_card_width;
 	}
 }

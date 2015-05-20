@@ -1,8 +1,8 @@
 function Card(option) {
 	this.x = option.x;
 	this.y = option.y;
-	this.width = 60;
-	this.height = 80;
+	this.width = 51;
+	this.height = 68;
 	this.name = option.name;
 	this.card_id = option.card_id;
 	this.card_view = new createjs.Container();

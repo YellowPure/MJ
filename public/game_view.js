@@ -10,6 +10,7 @@ var view = {
 		canvas.height = $('.game_main').height();
 
 		var stage = new createjs.Stage('game_view');
+		Global.canvas=canvas;
 		this.table = new Table();
 		Global.table=this.table;
 		
