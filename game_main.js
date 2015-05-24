@@ -1,10 +1,20 @@
 var mj_list = require('./mj_list');
 var table = require("./table");
-function GameMain(roomId) {
+var Global = require("./Global");
+function GameMain(roomId, socketId) {
 	this.roomId = roomId || null;
+	this.socketId = socketId;
 	this.players = [];
 	this.card_list = [];
 	this.game_state = 'NOT_BEGIN';
+	this.socket = null;
+	this.player_nums = 2;
+	console.log('new game main',roomId,socketId);
+	Global.io.sockets.sockets.forEach(function (element) {
+		if (element.id == socketId) {
+			this.socket = element;
+		}
+	}, this);
 }
 GameMain.prototype.addPlayer = function (playername) {
 	console.log('do here!');
@@ -32,16 +42,16 @@ GameMain.prototype.setPlayerReady = function (name) {
 		}
 	}
 }
-GameMain.prototype.setCurPlayerByData=function(data){
-	var self=this;
-	var arr=global.roomPlayer(self.roomId);
-	var index=arr.indexOf(data.username);
-	
+GameMain.prototype.setCurPlayerByData = function (data) {
+	var self = this;
+	var arr = global.roomPlayer(self.roomId);
+	var index = arr.indexOf(data.username);
+
 }
-GameMain.prototype.turnNextPlayer=function(){
-	var self=this;
-	var arr=global.roomPlayer(self.roomId);
-	var index=arr.indexOf();
+GameMain.prototype.turnNextPlayer = function () {
+	var self = this;
+	var arr = global.roomPlayer(self.roomId);
+	var index = arr.indexOf();
 }
 GameMain.prototype.setPlayerNotReady = function (name) {
 	for (var i = 0; i < global.roomPlayers[this.roomId].length; i++) {
@@ -61,7 +71,8 @@ GameMain.prototype.getPlayerInfoByName = function (playerName) {
 }
 GameMain.prototype.checkToStartGame = function () {
 	var pass = true;
-	var limit_num=1;//debug:1;  build:4
+	var limit_num = this.player_nums;//debug:1;  build:4
+	console.log("(global.roomPlayers[this.roomId].length", global.roomPlayers[this.roomId].length);
 	if (global.roomPlayers[this.roomId].length == limit_num) {
 		for (var i = 0; i < global.roomPlayers[this.roomId].length; i++) {
 			if (global.roomPlayers[this.roomId][i].ready == false) {
@@ -77,9 +88,9 @@ GameMain.prototype.checkToStartGame = function () {
 GameMain.prototype.countDown = function (callback) {
 	var self = this;
 	console.log('count down', this.roomId);
-	global.io_obj.to(this.roomId).emit('count down');
+	this.socket.emit('count down');
 	setTimeout(function () {
-		if(callback&&typeof callback =="function"){
+		if (callback && typeof callback == "function") {
 			callback();
 		}
 	}, 3000);
@@ -88,7 +99,8 @@ GameMain.prototype.startGame = function () {
 	this.game_state = 'GAME_START';
 	this.getCards();
 	this.card_list.sort();
-	global.io_obj.to(this.roomId).emit('start game',{card_list:this.card_list});
+//	this.socket.emit('count down');
+	this.socket.emit('start game', { card_list: this.card_list });
 }
 GameMain.prototype.getCards = function () {
 	this.card_list = mj_list.dealCards(this.roomId);
@@ -138,7 +150,7 @@ GameMain.prototype.chi = function (card_one, card_two) {
 		//符合吃的条件
 		//		global.io_obj.to(this.roomId).emit('chi',{card:match_card});
 	} else {
-		global.socket_obj.emit('not able chi', { error: '不满足条件' });
+		this.socket.emit('not able chi', { error: '不满足条件' });
 	}
 }
 GameMain.prototype.peng = function (card_one, card_two) {
@@ -153,7 +165,7 @@ GameMain.prototype.peng = function (card_one, card_two) {
 	if (same_num && same_type) {
 		//满足碰的条件
 	} else {
-		global.socket_obj.emit('not able peng', { error: '不满足条件' });
+		this.socket.emit('not able peng', { error: '不满足条件' });
 	}
 }
 
@@ -171,10 +183,10 @@ GameMain.prototype.gang = function (card_one, card_two, card_three) {
 	if (same_num && same_type || this.check_gane()) {
 		//
 	} else {
-		global.io_obj.to(this.roomId).emit('not able gane', { error: '不满足条件' });
+		Global.io.to(this.roomId).emit('not able gane', { error: '不满足条件' });
 	}
 }
-GameMain.prototype.check_gang = function(){
+GameMain.prototype.check_gang = function () {
 	var _check = {};
 	var _indexArr = [];
 	this.card_list.forEach(function (val, index) {
