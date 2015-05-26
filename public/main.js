@@ -167,6 +167,13 @@ $(function () {
 			//			}
 		}
 	});
+	
+	socket.on('table add card',function(data){
+		console.log('table add card',data);
+		if(data&&data.card_name){
+			Global.table.getCardFromPlayer(data.card_name);
+		}
+	});
 
 	function countDown(num) {
 		if ($('.count_down').length == 0) {

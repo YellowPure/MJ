@@ -11,19 +11,17 @@ server.listen(port, function () {
 	console.log('listening on %d', port);
 })
 app.use(express.static(__dirname + '/public'));
-
+var room=require('./room');
+room.init();
+room.init();
 //game main
 var usernames = {};
 var numUsers = 0;
 
 var roomIdPool = [];
-global.roomPlayers = {};
-var gameMain = null;
 var GameMain = require('./game_main');
 var MJList = require('./mj_list');
 
-//global.io_obj=io;
-//global.sockets=[];
 io.on('connection', function (socket) {
 	var addUsers = false;
 	console.log('connection success!', Global.io.sockets.sockets.length);//,io.sockets.sockets,socket.id);
@@ -54,17 +52,16 @@ io.on('connection', function (socket) {
 				console.log('MJlist init!!', socket.roomId);
 				MJList.setCount(socket.roomId);
 			}
-			//			if (MJList[curRoomId] == undefined) {
-			//				
-			//			}
-			gameMain = Object.create(new GameMain(curRoomId, socket.id));
+			count = GameMain.getCount();
+			console.log('gamemain getcount', count);
+			if (count != socket.roomId) {
+				GameMain.init(curRoomId, socket.id);
+			}
+			//			gameMain = Object.create(new GameMain(curRoomId, socket.id));
 			addPlayersToRoom(curRoomId, username);
-			socket.gameMain = gameMain;
-			//			console.log(Global.io.sockets.sockets[0].gameMain.game_state);
-			//			debugger;
-			
-			var player_list = global.roomPlayers[curRoomId];
-			console.log('global.roomPlayers:', global.roomPlayers[curRoomId]);
+
+			var player_list = Global.roomPlayers[curRoomId];
+			console.log('Global.roomPlayers:', Global.roomPlayers[curRoomId]);
 			socket.emit('login', {
 				username: username,
 				numUsers: numUsers,
@@ -88,7 +85,7 @@ io.on('connection', function (socket) {
 		if (addUsers) {
 			delete usernames[socket.username];
 			--numUsers;
-			gameMain.setPlayerNotReady(socket.username);
+			GameMain.setPlayerNotReady(socket.username);
 			io.to(socket.roomId).emit('player not ready', {
 				username: socket.username
 			});
@@ -103,41 +100,30 @@ io.on('connection', function (socket) {
 	});
 	socket.on('ready', function (data) {
 		console.log("I'm ready!");
-		gameMain.setPlayerReady(data.username);
-		if (gameMain.checkToStartGame() == true) {
+		GameMain.setPlayerReady(data.username);
+		if (GameMain.checkToStartGame() == true) {
 			io.to(data.roomId).emit('broadcast start game', { roomId: data.roomId });
-			//			console.log('ready count!!!!');
-			//			Global.io.sockets.sockets.forEach(function(element,index){
-			//				element.gameMain.countDown(function () {
-			//					element.gameMain.startGame();
-			//					turnNextPlayer(global.roomPlayers[socket.roomId], 0, socket);
-			//				});
-			//			});
 		}
 		io.to(data.roomId).emit('player ready', {
 			username: data.username
 		});
 	});
 	socket.on('broadcast start game', function (data) {
-		console.log('broadcast start game',data.username);
-//		Global.io.sockets.sockets.forEach(function (element, index) {
-//			if(data.roomId==element.roomId){
-				socket.gameMain.countDown(function () {
-					socket.gameMain.startGame();
-					turnNextPlayer(global.roomPlayers[socket.roomId], 0, socket);
-				});
-//			}
-//		});
+		console.log('broadcast start game', data.username);
+		GameMain.countDown(function () {
+			GameMain.startGame(socket);
+			turnNextPlayer(Global.roomPlayers[socket.roomId], 0, socket);
+		}, socket);
 	});
 	socket.on('throw', function (data) {
 		console.log('throw!');
 		if (data.card_name) {
-			gameMain.throwOneCard(data.card_name);
+			GameMain.throwOneCard(data.card_name,data.socketId);
 		}
 	});
 	socket.on('not ready', function (data) {
 		console.log("I'm not ready!");
-		gameMain.setPlayerNotReady(data.username);
+		GameMain.setPlayerNotReady(data.username);
 		io.to(data.roomId).emit('player not ready', {
 			username: data.username
 		});
@@ -145,13 +131,13 @@ io.on('connection', function (socket) {
 	socket.on('turn one player', function (data) {
 		console.log(" now one player moving", data);
 		var _index = getIndexById(data.username);
-		turnNextPlayer(global.roomPlayers[socket.roomId], _index);
+		turnNextPlayer(Global.roomPlayers[socket.roomId], _index);
 	});
 	socket.on('chi', function (data) {
 		console.log("chi card", data);
 	})
 	socket.on('player get one card', function (player_name) {
-		global.roomPlayers[socket.roomId].forEach(function (element, index) {
+		Global.roomPlayers[socket.roomId].forEach(function (element, index) {
 			if (element.username === player_name) {
 				var card = MJList.dealOneCard(socket.roomId);
 				console.log("player get one card", card, element.username);
@@ -164,12 +150,12 @@ io.on('connection', function (socket) {
 
 function getIndexById(id) {
 	var _socket;
-	global.sockets.forEach(function (element, index) {
+	Global.sockets.forEach(function (element, index) {
 		if (element.id == id) {
 			_socket = element;
 		}
 	}, this);
-	var arr = global.roomPlayers[_socket.roomId];
+	var arr = Global.roomPlayers[_socket.roomId];
 	arr.forEach(function (val, index) {
 		if (val.username == name) {
 			return index;
@@ -185,27 +171,27 @@ function turnNextPlayer(player_list, index, target) {
 
 
 function addPlayersToRoom(curRoomId, username) {
-	var curRoomId = curRoomId || null;
-	var username = username || null;
-	if (curRoomId && username) {
-		var roomId = curRoomId.toString();
-		if (global.roomPlayers[roomId] == undefined) {
-			global.roomPlayers[roomId] = new Array();
+	var _curRoomId = curRoomId || null;
+	var _username = username || null;
+	if (_curRoomId && _username) {
+		var roomId = _curRoomId.toString();
+		if (Global.roomPlayers[roomId] == undefined) {
+			Global.roomPlayers[roomId] = new Array();
 		}
-		global.roomPlayers[roomId].push({ username: username, ready: false });
+		Global.roomPlayers[roomId].push({ username: _username, ready: false });
 	}
 }
 
 function delPlayersFromRoom(curRoomId, username) {
-	var curRoomId = curRoomId || null;
-	var username = username || null;
-	console.log('out~~~~roooooooooom!!', curRoomId, username);
-	if (curRoomId && username) {
-		var roomStr = curRoomId.toString()
-		if (global.roomPlayers[roomStr]) {
-			global.roomPlayers[roomStr].forEach(function (value, index) {
+	var _curRoomId = curRoomId || null;
+	var _username = username || null;
+	console.log('out~~~~roooooooooom!!', _curRoomId, _username);
+	if (_curRoomId && username) {
+		var roomStr = _curRoomId.toString()
+		if (Global.roomPlayers[roomStr]) {
+			Global.roomPlayers[roomStr].forEach(function (value, index) {
 				if (value.username == username) {
-					global.roomPlayers[roomStr].splice(index, 1);
+					Global.roomPlayers[roomStr].splice(index, 1);
 				}
 			});
 		}

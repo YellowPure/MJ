@@ -39,8 +39,8 @@ Card.prototype.bindEvent = function() {
 	var self = this;
 	this.card_view.addEventListener('click',function(event){
 		if(self.side==1){
-			socket.emit('throw',{card_name:self.txt});
-			Global.table.getCardFromPlayer(self);
+			socket.emit('throw',{card_name:self.txt,socketId:Global.socketId});
+//			Global.table.getCardFromPlayer(self);
 		}
 	});
 	this.card_view.addEventListener('rollover', function(event) {

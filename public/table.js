@@ -30,7 +30,7 @@ function Table() {
 	this.initControls();
 	this.bindEvent();
 }
-Table.prototype.init = function() {
+Table.prototype.init = function () {
 	var card = new Card({
 		name: 'card_hide',
 		x: 0,
@@ -64,7 +64,7 @@ Table.prototype.init = function() {
 	// 	this.table_hide_view.addChild(card.card_view);
 	// }
 }
-Table.prototype.initControls = function() {
+Table.prototype.initControls = function () {
 	var self = this;
 	this.control_view = new createjs.Container();
 	this.control_view.x = parseInt(Global.canvas.width - 4 * self.row_card_width);
@@ -72,23 +72,23 @@ Table.prototype.initControls = function() {
 	this.table_view.addChild(this.control_view);
 
 
-	this.initControl_items('chi', 0, function(ev) {
+	this.initControl_items('chi', 0, function (ev) {
 		console.log('chi!');
 		socket.emit('chi', {
 			card_name: self.throw_card_list[self.throw_card_list.length - 1].txt
 		});
 	});
-	this.initControl_items('peng', 38, function(ev) {
+	this.initControl_items('peng', 38, function (ev) {
 		console.log('peng');
 	});
-	this.initControl_items('gang', 76, function(ev) {
+	this.initControl_items('gang', 76, function (ev) {
 		console.log('gang');
 	});
-	this.initControl_items('hu', 114, function(ev) {
+	this.initControl_items('hu', 114, function (ev) {
 		console.log('hu');
 	})
 }
-Table.prototype.initControl_items = function(txt, pos_x, callback) {
+Table.prototype.initControl_items = function (txt, pos_x, callback) {
 	var item = new createjs.Container();
 	this.control_view.addChild(item);
 	item.x = pos_x;
@@ -100,13 +100,13 @@ Table.prototype.initControl_items = function(txt, pos_x, callback) {
 	item.addChild(control_chi_txt);
 	control_chi_txt.y = 8;
 
-	item.addEventListener('click', function(ev) {
+	item.addEventListener('click', function (ev) {
 		if (typeof callback === 'function') {
 			callback(ev);
 		}
 	});
 }
-Table.prototype.dealCards = function() {
+Table.prototype.dealCards = function () {
 	var self = this;
 	self.cards_list = [];
 
@@ -125,7 +125,7 @@ Table.prototype.dealCards = function() {
 	self.animationCards();
 	//	return arr;
 }
-Table.prototype.animationCards = function() {
+Table.prototype.animationCards = function () {
 	var self = this;
 	var count = 0;
 	var half_cards_list_width = parseInt(self.cards_list.length * this.row_card_width / 2);
@@ -144,10 +144,10 @@ Table.prototype.animationCards = function() {
 	}
 	handler();
 }
-Table.prototype.dealCardsToPlayers = function() {
+Table.prototype.dealCardsToPlayers = function () {
 	var self = this;
 
-	this.cards_list.forEach(function(val, index) {
+	this.cards_list.forEach(function (val, index) {
 		val.side = 1;
 
 		val.y = 0;
@@ -159,26 +159,43 @@ Table.prototype.dealCardsToPlayers = function() {
 		// val.draw();
 	});
 }
-Table.prototype.bindEvent = function() {
+Table.prototype.bindEvent = function () {
 
 }
-Table.prototype.getCardFromPlayer = function(card) {
-	var info = card.getInfo();
+Table.prototype.getCardFromPlayer = function (card_name) {
+	var _index;
+	var _card = null;
+
+	_card = new Card({
+		name: 'card_0',
+		x: this.last_pos.x,
+		y: this.last_pos.y,
+		card_id: 0,
+		txt: card_name,
+		side: 1
+	});
+	this.player_cards_list.forEach(function (element, index) {
+		if (element.txt == card_name) {
+			_index = index;
+			_card = element;
+		}
+	});
+	var info = _card.getInfo();
 	info.x = this.row_card_width * this.throw_card_count;
 	//	info.y=100;
-	var _card = new Card(info);
-	this.table_player_view.removeChild(card.card_view);
-	var _index = this.player_cards_list.indexOf(card);
-	this.throw_card_list.push(this.player_cards_list[_index]);
+	var __card = new Card(info);
+	this.table_player_view.removeChild(_card.card_view);
+	//	var __index = this.player_cards_list.indexOf(_card);
+	this.throw_card_list.push(__card);
 	this.player_cards_list.splice(_index, 1);
 	this.playerSortCards();
-	this.table_show_view.addChild(_card.card_view);
+	this.table_show_view.addChild(__card.card_view);
 	this.throw_card_count++;
 }
-Table.prototype.getCardFromMachine = function(card_name) {
+Table.prototype.getCardFromMachine = function (card_name) {
 	var self = this;
 	socket.emit("player get one card", Global.username);
-	socket.on("player get one card", function(data) {
+	socket.on("player get one card", function (data) {
 		console.log("player get one card", data);
 		var info = {
 			x: 0,
@@ -194,7 +211,7 @@ Table.prototype.getCardFromMachine = function(card_name) {
 	});
 
 }
-Table.prototype.playerSortCards = function() {
+Table.prototype.playerSortCards = function () {
 	console.log(this.player_cards_list);
 	for (var i = 0; i < this.player_cards_list.length; i++) {
 		this.player_cards_list[i].card_view.x = i * this.row_card_width;

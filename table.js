@@ -2,6 +2,7 @@ var Global=require('./Global');
 var table={
 	list:{},
 	addCard:function(roomId,card_name){
+		console.log('table addCard');
 		if(this.list[roomId]==undefined){
 			this.list[roomId]=new Array();
 		}

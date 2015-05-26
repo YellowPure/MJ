@@ -1,4 +1,5 @@
 var Global={
-	io:null	
+	io:null,
+	roomPlayers:{}	
 };
 module.exports=Global;
