@@ -196,7 +196,7 @@ Table.prototype.getCardFromMachine = function (card_name) {
 	var self = this;
 	socket.emit("player get one card", Global.username);
 	socket.on("player get one card", function (data) {
-		console.log("player get one card", data);
+		console.log("player get one card", data)
 		var info = {
 			x: 0,
 			y: 0,
