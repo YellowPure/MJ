@@ -133,7 +133,7 @@ Table.prototype.animationCards = function () {
 	function handler(ev) {
 		if (count > self.cards_list.length - 1) {
 			self.dealCardsToPlayers();
-			self.getCardFromMachine();
+			// self.getCardFromMachine();
 			return;
 		}
 		createjs.Tween.get(self.cards_list[count].card_view).to({
@@ -160,7 +160,22 @@ Table.prototype.dealCardsToPlayers = function () {
 	});
 }
 Table.prototype.bindEvent = function () {
-
+	var self = this;
+//	socket.emit("player get one card", Global.username);
+	socket.on("player get one card", function (data) {
+		console.log("player get one card", data);
+		var info = {
+			x: 0,
+			y: 0,
+			txt: data.card,
+			side: 1,
+			card_id: 1000
+		};
+		var _card = new Card(info);
+		self.player_cards_list.push(_card);
+		self.table_player_view.addChild(_card.card_view);
+		self.playerSortCards();
+	});
 }
 Table.prototype.getCardFromPlayer = function (card_name) {
 	var _index;
@@ -192,25 +207,25 @@ Table.prototype.getCardFromPlayer = function (card_name) {
 	this.table_show_view.addChild(__card.card_view);
 	this.throw_card_count++;
 }
-Table.prototype.getCardFromMachine = function (card_name) {
-	var self = this;
-	socket.emit("player get one card", Global.username);
-	socket.on("player get one card", function (data) {
-		console.log("player get one card", data)
-		var info = {
-			x: 0,
-			y: 0,
-			txt: data.card,
-			side: 1,
-			card_id: 1000
-		};
-		var _card = new Card(info);
-		self.player_cards_list.push(_card);
-		self.table_player_view.addChild(_card.card_view);
-		self.playerSortCards();
-	});
+// Table.prototype.getCardFromMachine = function (card_name) {
+// 	var self = this;
+// //	socket.emit("player get one card", Global.username);
+// 	socket.on("player get one card", function (data) {
+// 		console.log("player get one card", data);
+// 		var info = {
+// 			x: 0,
+// 			y: 0,
+// 			txt: data.card,
+// 			side: 1,
+// 			card_id: 1000
+// 		};
+// 		var _card = new Card(info);
+// 		self.player_cards_list.push(_card);
+// 		self.table_player_view.addChild(_card.card_view);
+// 		self.playerSortCards();
+// 	});
 
-}
+// }
 Table.prototype.playerSortCards = function () {
 	console.log(this.player_cards_list);
 	for (var i = 0; i < this.player_cards_list.length; i++) {

@@ -16,6 +16,7 @@ var GameMain = {
 		this.card_list = [];
 		this.game_state = 'NOT_BEGIN';
 		this.player_nums = 2;
+		this.curPlayerIndex=0;
 		var self = this;
 		console.log('new game main', this.roomId, this.socketId);
 	},
@@ -67,6 +68,15 @@ var GameMain = {
 		};
 		return result;
 	},
+	getPlayerIndexByName:function(username){
+		var _index=null;
+		Global.roomPlayers[this.roomId].forEach(function(ele,index){
+			if(ele.username==username){
+				_index=index;
+			}
+		});
+		return _index;
+	},
 	checkToStartGame: function () {
 		var pass = true;
 		var limit_num = this.player_nums;//debug:1;  build:4
@@ -98,8 +108,31 @@ var GameMain = {
 		this.getCards();
 		this.card_list.sort();
 		//	this.socket.emit('count down');
+		console.log(socket.username,'username');
 		socket.emit('start game', { card_list: this.card_list });
+
+		var _index=this.getPlayerIndexByName(socket.username);
+		if(_index==this.curPlayerIndex){
+			this.playerGetOneCard();
+		}
+		// this.turnFirstPlayer(socket);
 	},
+	playerGetOneCard:function(){
+		var username=Global.roomPlayers[this.roomId][0].username;
+		var arr=Global.io.sockets.sockets;
+		var _sk;
+		arr.forEach(function(ele){
+			if(ele.username==username){
+				_sk=ele;
+			}
+		});
+		if(_sk){
+			var card=mj_list.dealOneCard(_sk.roomId);
+			console.log('player get one card!');
+			_sk.emit('player get one card',{name:_sk.username,card:card});
+		}
+	},
+	
 	getCards: function () {
 		console.log(mj_list.list[this.roomId].length, 'gameMain getCards');
 		this.card_list = mj_list.dealCards(this.roomId);
@@ -108,7 +141,12 @@ var GameMain = {
 	throwOneCard: function (name,socketId,username) {
 		console.log('gameMain throwOneCard', this.socketId);
 		var _index = this.card_list.indexOf(name);
-		console.log(_index, this.card_list, name)
+		var _playerIndex=this.getPlayerIndexByName(username);
+		console.log('_playerIndex' , _playerIndex,this.curPlayerIndex);
+		if(_playerIndex!=this.curPlayerIndex){
+			console.log('error : not cur action player!');
+			return;
+		}
 		if (_index != -1) {
 			this.card_list.splice(_index, 1);
 		}
@@ -118,15 +156,22 @@ var GameMain = {
 	turnNextPlayer:function(username){
 		var nextIndex=0;
 		var self=this;
-		Global.roomPlayers[this.roomId].forEach(function(ele,index){
-			if(ele.username==username){
-				if(index>=self.player_nums-1){
-					nextIndex=0;
-				}else{
-					nextIndex=index++;
-				}
-			}
-		});
+		var _index=this.getPlayerIndexByName(username);
+		if(_index>=self.player_nums-1){
+			nextIndex=0;
+		}else{
+			nextIndex=_index+1;
+		}
+		// Global.roomPlayers[this.roomId].forEach(function(ele,index){
+		// 	if(ele.username==username){
+		// 		if(index>=self.player_nums-1){
+		// 			nextIndex=0;
+		// 		}else{
+		// 			nextIndex=index+1;
+		// 		}
+		// 	}
+		// });
+		this.curPlayerIndex=nextIndex;
 		console.log('player turn ', nextIndex);
 		Global.io.to(this.roomId).emit('player turn',{name:Global.roomPlayers[this.roomId][nextIndex].username});
 	},

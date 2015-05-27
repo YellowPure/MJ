@@ -92,7 +92,7 @@ io.on('connection', function (socket) {
 				roomId: socket.roomId,
 				username: socket.username,
 				numUsers: numUsers,
-				player_list: roomPlayers[socket.roomId]
+				player_list: Global.roomPlayers[socket.roomId]
 			});
 		}
 	});
@@ -110,7 +110,7 @@ io.on('connection', function (socket) {
 		console.log('broadcast start game', data.username);
 		GameMain.countDown(function () {
 			GameMain.startGame(socket);
-			turnFirstPlayer(Global.roomPlayers[socket.roomId], 0, socket);
+//			turnFirstPlayer(Global.roomPlayers[socket.roomId], 0, socket);
 		}, socket);
 	});
 	socket.on('throw', function (data) {
@@ -129,16 +129,16 @@ io.on('connection', function (socket) {
 	socket.on('chi', function (data) {
 		console.log("chi card", data);
 	})
-	socket.on('player get one card', function (player_name) {
-		Global.roomPlayers[socket.roomId].forEach(function (element, index) {
-			if (element.username === player_name) {
-				var card = MJList.dealOneCard(socket.roomId);
-				console.log("player get one card", card, element.username);
-				socket.emit('player get one card', { name: element.username, card: card });
-			}
-		}, this);
-
-	});
+//	socket.on('player get one card', function (player_name) {
+//		Global.roomPlayers[socket.roomId].forEach(function (element, index) {
+//			if (element.username === player_name) {`
+//				var card = MJList.dealOneCard(socket.roomId);
+//				console.log("player get one card", card, element.username);
+//				socket.emit('player get one card', { name: element.username, card: card });
+//			}
+//		}, this);
+//
+//	});
 });
 
 function getIndexById(id) {
@@ -157,10 +157,10 @@ function getIndexById(id) {
 	return -1;
 }
 
-function turnFirstPlayer(player_list, index, target) {
-	console.log(index, "first player turn on");
-	target.emit('player turn', { name: player_list[index].username });
-}
+// function turnFirstPlayer(player_list, index, target) {
+// 	console.log(index, "first player turn on");
+// 	target.emit('player turn', { name: player_list[index].username });
+// }
 
 
 function addPlayersToRoom(curRoomId, username) {
