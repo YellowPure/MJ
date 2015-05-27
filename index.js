@@ -12,8 +12,6 @@ server.listen(port, function () {
 })
 app.use(express.static(__dirname + '/public'));
 var room=require('./room');
-room.init();
-room.init();
 //game main
 var usernames = {};
 var numUsers = 0;
@@ -112,13 +110,13 @@ io.on('connection', function (socket) {
 		console.log('broadcast start game', data.username);
 		GameMain.countDown(function () {
 			GameMain.startGame(socket);
-			turnNextPlayer(Global.roomPlayers[socket.roomId], 0, socket);
+			turnFirstPlayer(Global.roomPlayers[socket.roomId], 0, socket);
 		}, socket);
 	});
 	socket.on('throw', function (data) {
 		console.log('throw!');
 		if (data.card_name) {
-			GameMain.throwOneCard(data.card_name,data.socketId);
+			GameMain.throwOneCard(data.card_name,data.socketId,data.username);
 		}
 	});
 	socket.on('not ready', function (data) {
@@ -127,11 +125,6 @@ io.on('connection', function (socket) {
 		io.to(data.roomId).emit('player not ready', {
 			username: data.username
 		});
-	});
-	socket.on('turn one player', function (data) {
-		console.log(" now one player moving", data);
-		var _index = getIndexById(data.username);
-		turnNextPlayer(Global.roomPlayers[socket.roomId], _index);
 	});
 	socket.on('chi', function (data) {
 		console.log("chi card", data);
@@ -164,8 +157,8 @@ function getIndexById(id) {
 	return -1;
 }
 
-function turnNextPlayer(player_list, index, target) {
-	console.log(index, " _player turn on");
+function turnFirstPlayer(player_list, index, target) {
+	console.log(index, "first player turn on");
 	target.emit('player turn', { name: player_list[index].username });
 }
 

@@ -105,27 +105,36 @@ var GameMain = {
 		this.card_list = mj_list.dealCards(this.roomId);
 		console.log('card_list', this.card_list.length);
 	},
-	getOneCard: function () {
-		this.card_list.push(mj_list.dealOneCard());
-	},
-	throwOneCard: function (name) {
+	throwOneCard: function (name,socketId,username) {
 		console.log('gameMain throwOneCard', this.socketId);
 		var _index = this.card_list.indexOf(name);
 		console.log(_index, this.card_list, name)
 		if (_index != -1) {
 			this.card_list.splice(_index, 1);
-			table.addCard(this.roomId, name);
 		}
+		table.addCard(this.roomId, name);
+		this.turnNextPlayer(username);
+	},
+	turnNextPlayer:function(username){
+		var nextIndex=0;
+		var self=this;
+		Global.roomPlayers[this.roomId].forEach(function(ele,index){
+			if(ele.username==username){
+				if(index>=self.player_nums-1){
+					nextIndex=0;
+				}else{
+					nextIndex=index++;
+				}
+			}
+		});
+		console.log('player turn ', nextIndex);
+		Global.io.to(this.roomId).emit('player turn',{name:Global.roomPlayers[this.roomId][nextIndex].username});
 	},
 	pauseGame: function () {
 		this.game_state = "GAME_PAUSE";
 	},
 	endGame: function () {
 		this.game_state = "GAME_END";
-	},
-	getOneCard: function (card) {
-		var card = mj_list.dealOneCard(this.roomId);
-		this.card_list.push(card);
 	},
 	chi: function (card_one, card_two) {
 		var match_card = table.lastCard();
