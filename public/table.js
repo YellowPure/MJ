@@ -158,6 +158,7 @@ Table.prototype.dealCardsToPlayers = function () {
 		self.player_cards_list.push(card);
 		// val.draw();
 	});
+	socket.emit('end animated',{name:Global.username});
 }
 Table.prototype.bindEvent = function () {
 	var self = this;
@@ -189,12 +190,12 @@ Table.prototype.getCardFromPlayer = function (card_name) {
 		txt: card_name,
 		side: 1
 	});
-	this.player_cards_list.forEach(function (element, index) {
-		if (element.txt == card_name) {
-			_index = index;
-			_card = element;
-		}
-	});
+	// this.player_cards_list.forEach(function (element, index) {
+	// 	if (element.txt == card_name) {
+	// 		_index = index;
+	// 		_card = element;
+	// 	}
+	// });
 	var info = _card.getInfo();
 	info.x = this.row_card_width * this.throw_card_count;
 	//	info.y=100;
@@ -202,32 +203,17 @@ Table.prototype.getCardFromPlayer = function (card_name) {
 	this.table_player_view.removeChild(_card.card_view);
 	//	var __index = this.player_cards_list.indexOf(_card);
 	this.throw_card_list.push(__card);
-	this.player_cards_list.splice(_index, 1);
+	// this.player_cards_list.splice(_index, 1);
 	this.playerSortCards();
 	this.table_show_view.addChild(__card.card_view);
 	this.throw_card_count++;
 }
 // Table.prototype.getCardFromMachine = function (card_name) {
 // 	var self = this;
-// //	socket.emit("player get one card", Global.username);
-// 	socket.on("player get one card", function (data) {
-// 		console.log("player get one card", data);
-// 		var info = {
-// 			x: 0,
-// 			y: 0,
-// 			txt: data.card,
-// 			side: 1,
-// 			card_id: 1000
-// 		};
-// 		var _card = new Card(info);
-// 		self.player_cards_list.push(_card);
-// 		self.table_player_view.addChild(_card.card_view);
-// 		self.playerSortCards();
-// 	});
-
+// 	socket.emit("player get one card", Global.username);
 // }
 Table.prototype.playerSortCards = function () {
-	console.log(this.player_cards_list);
+	console.log(this.player_cards_list,"length:",this.player_cards_list.length);
 	for (var i = 0; i < this.player_cards_list.length; i++) {
 		this.player_cards_list[i].card_view.x = i * this.row_card_width;
 	}

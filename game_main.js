@@ -111,14 +111,16 @@ var GameMain = {
 		console.log(socket.username,'username');
 		socket.emit('start game', { card_list: this.card_list });
 
-		var _index=this.getPlayerIndexByName(socket.username);
+		// this.turnFirstPlayer(socket);
+	},
+	endAnimated:function(username){
+		var _index=this.getPlayerIndexByName(username);
 		if(_index==this.curPlayerIndex){
 			this.playerGetOneCard();
 		}
-		// this.turnFirstPlayer(socket);
 	},
 	playerGetOneCard:function(){
-		var username=Global.roomPlayers[this.roomId][0].username;
+		var username=Global.roomPlayers[this.roomId][this.curPlayerIndex].username;
 		var arr=Global.io.sockets.sockets;
 		var _sk;
 		arr.forEach(function(ele){
@@ -149,6 +151,7 @@ var GameMain = {
 		}
 		if (_index != -1) {
 			this.card_list.splice(_index, 1);
+			var $index=Global.io.sockets.sockets;
 		}
 		table.addCard(this.roomId, name);
 		this.turnNextPlayer(username);
@@ -173,6 +176,7 @@ var GameMain = {
 		// });
 		this.curPlayerIndex=nextIndex;
 		console.log('player turn ', nextIndex);
+		this.playerGetOneCard();
 		Global.io.to(this.roomId).emit('player turn',{name:Global.roomPlayers[this.roomId][nextIndex].username});
 	},
 	pauseGame: function () {

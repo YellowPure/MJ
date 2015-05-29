@@ -128,7 +128,13 @@ io.on('connection', function (socket) {
 	});
 	socket.on('chi', function (data) {
 		console.log("chi card", data);
-	})
+	});
+	socket.on('end animated',function(data){
+		var count=0;
+		if(data&&data.name){
+			GameMain.endAnimated(data.name);
+		}
+	});
 //	socket.on('player get one card', function (player_name) {
 //		Global.roomPlayers[socket.roomId].forEach(function (element, index) {
 //			if (element.username === player_name) {`
