@@ -11,7 +11,9 @@ server.listen(port, function () {
 	console.log('listening on %d', port);
 })
 app.use(express.static(__dirname + '/public'));
-var room=require('./room');
+var rooms= {};
+var Room=require('./Room');
+
 //game main
 var usernames = {};
 var numUsers = 0;
@@ -33,6 +35,23 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('add user', function (username) {
+		var curRoomId = updateRoomPoolByUsers();
+		if (rooms[curRoomId] == undefined ){
+			rooms[curRoomId] = new Room(curRoomId);
+		}
+		//判断当前房间中是否有重复名称的玩家
+		if(rooms[curRoomId].checkSameUsername == false){
+			rooms[curRoomId].addPlayer(socket,username);
+			addUsers = true;
+			++ numUsers;
+
+			
+		}
+		
+		
+		
+
+		socket.join(curRoomId);
 		if (usernames[username] == undefined) {
 			socket.username = username;
 
@@ -40,7 +59,7 @@ io.on('connection', function (socket) {
 			addUsers = true;
 			++numUsers;
 
-			var curRoomId = updateRoomPoolByUsers();
+			
 			socket.join(curRoomId);
 			console.log('socket join room:', socket.rooms);
 			socket.roomId = curRoomId;
@@ -135,16 +154,6 @@ io.on('connection', function (socket) {
 			GameMain.endAnimated(data.name);
 		}
 	});
-//	socket.on('player get one card', function (player_name) {
-//		Global.roomPlayers[socket.roomId].forEach(function (element, index) {
-//			if (element.username === player_name) {`
-//				var card = MJList.dealOneCard(socket.roomId);
-//				console.log("player get one card", card, element.username);
-//				socket.emit('player get one card', { name: element.username, card: card });
-//			}
-//		}, this);
-//
-//	});
 });
 
 function getIndexById(id) {
