@@ -12,6 +12,7 @@ server.listen(port, function () {
 })
 app.use(express.static(__dirname + '/public'));
 var rooms= {};
+var cardBoxs = {};
 var Room=require('./Room');
 
 //game main
@@ -19,8 +20,7 @@ var usernames = {};
 var numUsers = 0;
 
 var roomIdPool = [];
-var GameMain = require('./game_main');
-var MJList = require('./mj_list');
+var MJList = require('./CardBox');
 
 io.on('connection', function (socket) {
 	var addUsers = false;
@@ -35,50 +35,25 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('add user', function (username) {
-		var curRoomId = updateRoomPoolByUsers();
+		addUsers = true;
+		++ numUsers;
+		var curRoomId = createRoomId();
 		if (rooms[curRoomId] == undefined ){
 			rooms[curRoomId] = new Room(curRoomId);
 		}
 		//判断当前房间中是否有重复名称的玩家
-		if(rooms[curRoomId].checkSameUsername == false){
+		if(rooms[curRoomId].checkSameUsername() == false){
 			rooms[curRoomId].addPlayer(socket,username);
-			addUsers = true;
-			++ numUsers;
-
 			
-		}
-		
-		
-		
-
-		socket.join(curRoomId);
-		if (usernames[username] == undefined) {
-			socket.username = username;
-
-			usernames[username] = username;
-			addUsers = true;
-			++numUsers;
-
 			
 			socket.join(curRoomId);
 			console.log('socket join room:', socket.rooms);
 			socket.roomId = curRoomId;
-			var count = MJList.getCount();
-			if (count != socket.roomId) {
-				MJList.init(curRoomId);
-				console.log('MJlist init!!', socket.roomId);
-				MJList.setCount(socket.roomId);
-			}
-			count = GameMain.getCount();
-			console.log('gamemain getcount', count);
-			if (count != socket.roomId) {
-				GameMain.init(curRoomId, socket.id);
-			}
-			//			gameMain = Object.create(new GameMain(curRoomId, socket.id));
-			addPlayersToRoom(curRoomId, username);
+			socket.username = username;
+//			addPlayersToRoom(curRoomId, username);
 
-			var player_list = Global.roomPlayers[curRoomId];
-			console.log('Global.roomPlayers:', Global.roomPlayers[curRoomId]);
+			var player_list = rooms[curRoomId].getPlayerList();
+//			console.log('Global.roomPlayers:', Global.roomPlayers[curRoomId]);
 			socket.emit('login', {
 				username: username,
 				numUsers: numUsers,
@@ -86,44 +61,78 @@ io.on('connection', function (socket) {
 				player_list: player_list,
 				socketId: socket.id
 			});
-			console.log(numUsers, username, curRoomId, 'user join');
+			console.log(username +'  joined '+ curRoomId +"_Room");
 			socket.broadcast.to(curRoomId.toString()).emit('user join', {
 				roomId: curRoomId,
 				numUsers: numUsers,
 				username: username,
 				player_list: player_list
 			});
+		}else{
+			socket.emit('error',{msg:'same name!'});
 		}
 	});
+		
+//		if (usernames[username] == undefined) {
+//			socket.username = username;
+//
+//			usernames[username] = username;
+//			addUsers = true;
+//			++numUsers;
+//			socket.join(curRoomId);
+//			
+//			socket.roomId = curRoomId;
+//			var count = MJList.getCount();
+//			if (count != socket.roomId) {
+//				MJList.init(curRoomId);
+//				console.log('MJlist init!!', socket.roomId);
+//				MJList.setCount(socket.roomId);
+//			}
+//			count = GameMain.getCount();
+//			console.log('gamemain getcount', count);
+//			if (count != socket.roomId) {
+//				GameMain.init(curRoomId, socket.id);
+//			}
+			//			gameMain = Object.create(new GameMain(curRoomId, socket.id));
+			
+//		}
+	
 
 	// socket.broadcast.emit('connection','connection 1');
 	socket.on('disconnect', function () {
 		console.log('use disconnect');
+		
 		if (addUsers) {
-			delete usernames[socket.username];
+			rooms[socket.roomId].delPlayer(socket.username);
+//			delete usernames[socket.username];
 			--numUsers;
-			GameMain.setPlayerNotReady(socket.username);
-			io.to(socket.roomId).emit('player not ready', {
-				username: socket.username
-			});
-			delPlayersFromRoom(socket.roomId, socket.username);
+//			GameMain.setPlayerNotReady(socket.username);
+//			io.to(socket.roomId).emit('player not ready', {
+//				username: socket.username
+//			});
+//			delPlayersFromRoom(socket.roomId, socket.username);
 			socket.broadcast.emit('user left', {
 				roomId: socket.roomId,
 				username: socket.username,
 				numUsers: numUsers,
-				player_list: Global.roomPlayers[socket.roomId]
+				player_list: rooms[socket.roomId].getPlayerList()
 			});
 		}
 	});
 	socket.on('ready', function (data) {
 		console.log("I'm ready!");
-		GameMain.setPlayerReady(data.username);
-		if (GameMain.checkToStartGame() == true) {
-			io.to(data.roomId).emit('broadcast start game', { roomId: data.roomId });
+		if(rooms[data.roomId].setPlayerReady(data.username)){
+			io.to(data.roomId).emit('player ready', {
+				username: data.username
+			});
+		}else{
+			io.to(data.roomId).emit('error',{msg:'ready error'});
 		}
-		io.to(data.roomId).emit('player ready', {
-			username: data.username
-		});
+//		GameMain.setPlayerReady(data.username);
+//		if (GameMain.checkToStartGame() == true) {
+//			io.to(data.roomId).emit('broadcast start game', { roomId: data.roomId });
+//		}
+		
 	});
 	socket.on('broadcast start game', function (data) {
 		console.log('broadcast start game', data.username);
@@ -135,25 +144,31 @@ io.on('connection', function (socket) {
 	socket.on('throw', function (data) {
 		console.log('throw!');
 		if (data.card_name) {
-			GameMain.throwOneCard(data.card_name,data.socketId,data.username);
+			rooms[socket.roomId].gameMain.getThrowCard(data.card_name,socket);
+//			GameMain.throwOneCard(data.card_name,data.socketId,data.username);
 		}
 	});
 	socket.on('not ready', function (data) {
 		console.log("I'm not ready!");
-		GameMain.setPlayerNotReady(data.username);
-		io.to(data.roomId).emit('player not ready', {
-			username: data.username
-		});
+		if(rooms[data.roomId].setPlayerNotReady(data.username)){
+			io.to(data.roomId).emit('player not ready', {
+				username: data.username
+			});
+		}else{
+			io.to(data.roomId).emit('error',{msg:'not ready error'});
+		}
+//		GameMain.setPlayerNotReady(data.username);
+		
 	});
 	socket.on('chi', function (data) {
 		console.log("chi card", data);
 	});
-	socket.on('end animated',function(data){
-		var count=0;
-		if(data&&data.name){
-			GameMain.endAnimated(data.name);
-		}
-	});
+//	socket.on('end animated',function(data){
+//		var count=0;
+//		if(data&&data.name){
+//			GameMain.endAnimated(data.name);
+//		}
+//	});
 });
 
 function getIndexById(id) {
@@ -205,9 +220,8 @@ function delPlayersFromRoom(curRoomId, username) {
 		}
 	}
 }
-function updateRoomPoolByUsers() {
+function createRoomId(){
 	var len = Math.ceil(numUsers / 4);
-	roomIdPool = [];
 	var num = 10000;
 	for (var i = 0; i < len; i++) {
 		roomIdPool.push(num.toString());

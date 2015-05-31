@@ -40,7 +40,7 @@ Card.prototype.bindEvent = function() {
 	this.card_view.addEventListener('click',function(event){
 		if(self.side==1){
 			socket.emit('throw',{card_name:self.txt,socketId:Global.socketId,username:Global.username});
-//			Global.table.getCardFromPlayer(self);
+			Global.table.throwCard(self);
 		}
 	});
 	this.card_view.addEventListener('rollover', function(event) {

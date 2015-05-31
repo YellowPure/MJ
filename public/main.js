@@ -25,9 +25,11 @@ $(function () {
 	});
 	$('#nickname').on('keydown', function (e) {
 		if (e.keyCode == 13) {
-			socket.emit('add user', $('#nickname').val());
-			$('.login').hide(200);
-			$('.game').show(200);
+			if($('#nickname').val!=""){
+				socket.emit('add user', $('#nickname').val());
+				$('.login').hide(200);
+				$('.game').show(200);
+			}
 		}
 	});
 	socket.on('login', function (data) {
@@ -147,14 +149,21 @@ $(function () {
 		socket.emit('broadcast start game', { roomId: data.roomId, username: Global.username });
 	});
 	socket.on('start game', function (data) {
-		console.log('start game get cards', data.card_list);
+		console.log('start game get cards');
 		$('#game_view').show();
 		//		game_data.init({card_list:data.card_list});
 		view.init();
 		$('.player1').hide(200);
-		view.setData({
-			card_list: data.card_list
-		});
+//		view.setData({
+//			card_list: data.card_list
+//		});
+	});
+	socket.on('deal card', function(data){
+		if(data.card_list){
+			view.setData({
+				card_list:data.card_list
+			});
+		}
 	});
 	socket.on('player turn', function (data) {
 		console.log(data.name, 'player turn');

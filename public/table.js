@@ -158,7 +158,7 @@ Table.prototype.dealCardsToPlayers = function () {
 		self.player_cards_list.push(card);
 		// val.draw();
 	});
-	socket.emit('end animated',{name:Global.username});
+//	socket.emit('end animated',{name:Global.username});
 }
 Table.prototype.bindEvent = function () {
 	var self = this;
@@ -177,6 +177,19 @@ Table.prototype.bindEvent = function () {
 		self.table_player_view.addChild(_card.card_view);
 		self.playerSortCards();
 	});
+}
+Table.prototype.throwCard = function(data){
+//	var info = {
+//			x: 0,
+//			y: 0,
+//			txt: data.card,
+//			side: 1,
+//			card_id: 1000
+//		};
+		var _card = new Card(data.getInfo());
+		self.player_cards_list.push(_card);
+		self.table_player_view.addChild(_card.card_view);
+		self.playerSortCards();
 }
 Table.prototype.getCardFromPlayer = function (card_name) {
 	var _index;
