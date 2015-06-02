@@ -19,6 +19,17 @@ function Card(option) {
 	this.text.visible=false;
 	this.card_view.addChild(this.bg);
 	this.card_view.addChild(this.text);
+	
+	this.bitmap = new createjs.Bitmap("img/"+img_url[this.txt]+".png");
+	this.bitmap.sourceRect=new createjs.Rectangle(24,13,80,110);
+	
+	var scaleX=this.width/80;
+	var scaleY = this.height/110;
+	this.bitmap.scaleX=scaleX;
+	this.bitmap.scaleY = scaleY;
+//	bitmap.setBounds(-24,-13,80,110);
+	this.card_view.addChild(this.bitmap);
+	this.bitmap.visible=false;
 	this.side=option.side;
 	this.draw();
 	this.bindEvent();
@@ -62,11 +73,13 @@ Card.prototype.draw = function() {
 	if (this.side == 1) { //正面
 		this.bg.graphics.beginStroke("#000").drawRect(0, 0, this.width, this.height);
 		this.bg.graphics.beginFill("#fff").drawRect(1, 1, this.width - 1, this.height - 1);
-		this.text.visible=true;
+		this.text.visible=false;
+		this.bitmap.visible=true;
 	} else if (this.side == 2) { //反面
 		this.bg.graphics.beginStroke('#000').drawRect(0, 0, this.width, this.height);
 		this.bg.graphics.beginFill("#f00").drawRect(1, 1, this.width - 1, this.height - 1);
 		this.text.visible=false;
+		this.bitmap.visibla=false;
 	}
 
 }
