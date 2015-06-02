@@ -12,27 +12,40 @@ function GameMain(option) {
 	this.machine = Object.create(Machine);
 	this.curPlayerIndex = 0;
 }
-GameMain.prototype.startGame = function () {
+GameMain.prototype.startGame = function() {
+	var self = this;
 	this.game_state = 'GAME_START';
 	//	this.getCards();
 	//	this.card_list.sort();
 	//	this.socket.emit('count down');
 	this.table = new Table();
 	this.cardBox = new CardBox();
-	Global.io.to(this.roomId).emit('start game');
-	this.dealCardsToPlayers();
+	this.playerList.forEach(function(ele,index) {
+		var _num=13;
+		if(index==0){
+			_num=14;
+		}
+		var cards = self.cardBox.dealCards(_num);
+		ele.cardList = cards;
+		ele.socket.emit('start game', {
+			card_list: cards
+		});
+	});
+	// this.dealCardsToPlayers();
+	// Global.io.to(this.roomId).emit('start game');
 };
-GameMain.prototype.dealCardsToPlayers = function () {
+GameMain.prototype.dealCardsToPlayers = function() {
 	var self = this;
-	this.playerList.forEach(function (ele) {
+	this.playerList.forEach(function(ele) {
 		var cards = self.cardBox.dealCards(13);
 		ele.cardList = cards;
-		ele.socket.emit('deal card', { card_list: cards });
+		ele.socket.emit('deal card', {
+			card_list: cards
+		});
 	});
 };
-GameMain.prototype.getThrowCard = function (cardName,socket) {
+GameMain.prototype.getThrowCard = function(cardName, socket) {
 	console.log('gameMain get throw Card');
-//	var _index = this.card_list.indexOf(cardName);
 	var _player = this.getPlayerByName(socket.username);
 	var _index = _player.cardList.indexOf(cardName);
 	console.log('_player:', this.curPlayerIndex);
@@ -43,41 +56,50 @@ GameMain.prototype.getThrowCard = function (cardName,socket) {
 	if (_index != -1) {
 		_player.cardList.splice(_index, 1);
 	}
+	socket.emit('throw success', {
+		card_name: cardName
+	});
+	socket.broadcast.to(this.roomId).emit('table add card', {
+		card_name: cardName
+	});
 	this.table.addCard(cardName);
 	this.turnNextPlayer(_player.username);
 };
-GameMain.prototype.getPlayerByName = function(username){
+GameMain.prototype.getPlayerByName = function(username) {
 	var result = null;
-	this.playerList.forEach(function(ele,index){
-		if(ele.username == username){
+	this.playerList.forEach(function(ele, index) {
+		if (ele.username == username) {
 			result = ele;
 		}
 	});
 	return result;
 };
-GameMain.prototype.turnNextPlayer = function (username) {
+GameMain.prototype.turnNextPlayer = function(username) {
 	var nextIndex = 0;
-		var self = this;
-		var _player = this.getPlayerByName(username);
-		var _index = this.playerList.indexOf(_player);
-		if (_index >= this.playerList.length - 1) {
-			nextIndex = 0;
-		} else {
-			nextIndex = _index + 1;
-		}
-		this.curPlayerIndex = nextIndex;
-		console.log('player turn ', nextIndex);
-//		this.playerGetOneCard();
-		var _name = this.playerList[nextIndex].username ;
-		Global.io.to(this.roomId).emit('player turn', { name:_name });
-		this.dealCardToPlayer(_name);
+	var self = this;
+	var _player = this.getPlayerByName(username);
+	var _index = this.playerList.indexOf(_player);
+	if (_index >= this.playerList.length - 1) {
+		nextIndex = 0;
+	} else {
+		nextIndex = _index + 1;
+	}
+	this.curPlayerIndex = nextIndex;
+	console.log('player turn ', nextIndex);
+	var _name = this.playerList[nextIndex].username;
+	Global.io.to(this.roomId).emit('player turn', {
+		name: _name
+	});
+	this.dealCardToPlayer(_name);
 };
-GameMain.prototype.dealCardToPlayer = function(username){
+GameMain.prototype.dealCardToPlayer = function(username) {
 	var _player = this.getPlayerByName(username);
 	var card = this.cardBox.dealCards(1);
-	_player.socket.emit('deal card',{card_list:card});
+	_player.socket.emit('deal card', {
+		card_list: card
+	});
 };
-GameMain.prototype.stopGame = function () {
+GameMain.prototype.stopGame = function() {
 	this.game_state = "GAME_STOP";
 };
 

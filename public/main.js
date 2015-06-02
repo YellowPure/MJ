@@ -7,47 +7,142 @@ var Global = {
 	canvas: null,
 	socketId: null
 };
-$(function () {
-	$('.login').show();
-	$('.game').hide();
-	$('.player').hide();
-	$('#game_view').hide();
-	$('#action_box').hide();
-
-	$('form.chat_form').submit(function (e) {
-		// e.preventDefault();
-		socket.emit('new message', {
-			msg: $('#m').val(),
-			roomId: Global.roomId
+var main = {
+	init: function() {
+		$('.login').show();
+		$('.game').hide();
+		$('.player').hide();
+		$('#game_view').hide();
+		$('#action_box').hide();
+		this.bindEvent();
+	},
+	bindEvent: function() {
+		$('form.chat_form').submit(function(e) {
+			// e.preventDefault();
+			socket.emit('new message', {
+				msg: $('#m').val(),
+				roomId: Global.roomId
+			});
+			$('#m').val('');
+			return false;
 		});
-		$('#m').val('');
-		return false;
-	});
-	$('#nickname').on('keydown', function (e) {
-		if (e.keyCode == 13) {
-			if($('#nickname').val!=""){
-				socket.emit('add user', $('#nickname').val());
-				$('.login').hide(200);
-				$('.game').show(200);
+		$('#nickname').on('keydown', function(e) {
+			if (e.keyCode == 13) {
+				if ($('#nickname').val != "") {
+					socket.emit('add user', $('#nickname').val());
+					$('.login').hide(200);
+					$('.game').show(200);
+				}
 			}
-		}
-	});
-	socket.on('login', function (data) {
-		console.log('welcome', data);
-		Global.roomId = data.roomId;
-		Global.username = data.username;
-		Global.socketId = data.socketId;
-		updatePlayerShow(data['player_list']);
-		$('#messages').append($('<li>').text('welcome! there are ' + data.numUsers + 'people in the room,roomId:' + data.roomId));
-	});
-	var userNum = 0;
-	socket.on('user join', function (data) {
-		console.log(data, 'user join');
-		updatePlayerShow(data['player_list']);
-		$('#messages').append($('<li>').text(data.username + ' join the room, ' + data.numUsers + 'people in the room__roomId:' + data.roomId));
-	});
-
-	function updatePlayerShow(list) {
+		});
+		$('.ready').on('click', function(e) {
+			socket.emit('ready', {
+				username: Global.username,
+				roomId: Global.roomId
+			});
+		});
+		$('.not_ready').on('click', function(e) {
+			socket.emit('not ready', {
+				username: Global.username,
+				roomId: Global.roomId
+			});
+		});
+		this.bindSocketEvent();
+	},
+	bindSocketEvent: function() {
+		var self = this;
+		socket.on('login', function(data) {
+			console.log('welcome', data);
+			Global.roomId = data.roomId;
+			Global.username = data.username;
+			Global.socketId = data.socketId;
+			self.updatePlayerShow(data['player_list']);
+			$('#messages').append($('<li>').text('welcome! there are ' + data.numUsers + 'people in the room,roomId:' + data.roomId));
+		});
+		socket.on('user join', function(data) {
+			console.log(data, 'user join');
+			self.updatePlayerShow(data['player_list']);
+			$('#messages').append($('<li>').text(data.username + ' join the room, ' + data.numUsers + 'people in the room__roomId:' + data.roomId));
+		});
+		socket.on('new message', function(data) {
+			console.log('new messages123');
+			$('#messages').append($('<li>').text(data.username + ':' + data.message));
+		});
+		socket.on('disconnect', function(msg) {
+			console.log('disconnect');
+			socket.disconnect();
+			// $('#messages').append($('<li class="red">').text(msg));
+		});
+		socket.on('error', function(data) {
+			console.log('error', data);
+		})
+		socket.on('connection', function(msg) {
+			$('#messages').append($('<li class="red">').text(msg));
+		});
+		socket.on('user left', function(data) {
+			self.updatePlayerShow(data['player_list']);
+			$('#messages').append($('<li class="red">').text(data.username + '' + data.numUsers));
+		});
+		socket.on('player ready', function(data) {
+			console.log('player:' + data.username + ' ready');
+			$.each($('.player'), function(index, val) {
+				/* iterate through array or object */
+				if ($(val).data('name') == data.username && index == 0) {
+					$(val).find('.ready').attr('disabled', true);
+					$(val).find('.not_ready').attr('disabled', false);
+				}
+				if ($(val).data('name') == data.username) {
+					$(val).find('.ready_info').text('玩家已准备');
+				}
+			});
+		});
+		socket.on('player not ready', function(data) {
+			console.log('player:' + data.username + ' not ready');
+			$.each($('.player'), function(index, val) {
+				/* iterate through array or object */
+				if ($(val).data('name') == data.username && index == 0) {
+					$(val).find('.ready').attr('disabled', false);
+					$(val).find('.not_ready').attr('disabled', true);
+				}
+				if ($(val).data('name') == data.username) {
+					$(val).find('.ready_info').text('玩家没准备好');
+				}
+			});
+		});
+		socket.on('start game', function(data) {
+			console.log('start game');
+			$('#game_view').show();
+			$('.player1').hide(200);
+			view.init();
+			game_data.setCardData(data.card_list);
+			view.countDown(function() {
+				view.table.dealCards();
+			});
+		});
+		socket.on('deal card', function(data) {
+			console.log('deal card',data);
+			if (data.card_list) {
+				game_data.setCardData(data.card_list);
+				Global.table.playerAddCards(data.card_list);
+			}
+		});
+		socket.on('player turn', function(data) {
+			console.log(data.name, 'player turn');
+		});
+		socket.on('throw success', function(data) {
+			console.log('throw success', data);
+			if (data && data.card_name) {
+				Global.table.playerThrowCard(data.card_name);
+			}
+		});
+		socket.on('table add card', function(data) {
+			console.log('table add card', data);
+			if (data && data.card_name) {
+				Global.table.throwListAddCard(data.card_name);
+			}
+		});
+	},
+	updatePlayerShow: function(list) {
 		Global.player_name_list = list;
 		var curUserIndex = null;
 		for (var i = 0; i < list.length; i++) {
@@ -85,124 +180,7 @@ $(function () {
 			}
 		}
 	}
-	socket.on('new message', function (data) {
-		console.log('new messages123');
-		$('#messages').append($('<li>').text(data.username + ':' + data.message));
-	});
-	socket.on('disconnect', function (msg) {
-		console.log('disconnect');
-		socket.disconnect();
-		// $('#messages').append($('<li class="red">').text(msg));
-	});
-	socket.on('error', function (data) {
-		console.log('error', data);
-	})
-	socket.on('connection', function (msg) {
-		$('#messages').append($('<li class="red">').text(msg));
-	});
-	socket.on('user left', function (data) {
-		updatePlayerShow(data['player_list']);
-		$('#messages').append($('<li class="red">').text(data.username + '' + data.numUsers));
-	});
-	socket.on('player ready', function (data) {
-		console.log('player:' + data.username + ' ready');
-		$.each($('.player'), function (index, val) {
-			/* iterate through array or object */
-			if ($(val).data('name') == data.username && index == 0) {
-				$(val).find('.ready').attr('disabled', true);
-				$(val).find('.not_ready').attr('disabled', false);
-			}
-			if ($(val).data('name') == data.username) {
-				$(val).find('.ready_info').text('玩家已准备');
-			}
-		});
-	});
-	socket.on('player not ready', function (data) {
-		console.log('player:' + data.username + ' not ready');
-		$.each($('.player'), function (index, val) {
-			/* iterate through array or object */
-			if ($(val).data('name') == data.username && index == 0) {
-				$(val).find('.ready').attr('disabled', false);
-				$(val).find('.not_ready').attr('disabled', true);
-			}
-			if ($(val).data('name') == data.username) {
-				$(val).find('.ready_info').text('玩家没准备好');
-			}
-		});
-	});
-	socket.on('count down', function () {
-		console.log('count down');
-		var num = 3;
-		countDown(num);
-		var timeId = setInterval(function () {
-			num--;
-			countDown(num);
-			console.log(num);
-			if (num == 0) {
-				clearInterval(timeId);
-				$('.count_down').remove();
-			}
-		}, 1000);
-	});
-	socket.on('broadcast start game', function (data) {
-		console.log('broadcast start game', Global.username);
-		socket.emit('broadcast start game', { roomId: data.roomId, username: Global.username });
-	});
-	socket.on('start game', function (data) {
-		console.log('start game get cards');
-		$('#game_view').show();
-		//		game_data.init({card_list:data.card_list});
-		view.init();
-		$('.player1').hide(200);
-//		view.setData({
-//			card_list: data.card_list
-//		});
-	});
-	socket.on('deal card', function(data){
-		if(data.card_list){
-			view.setData({
-				card_list:data.card_list
-			});
-		}
-	});
-	socket.on('player turn', function (data) {
-		console.log(data.name, 'player turn');
-		if (Global.username === data.name) {
-			//check是本玩家
-			//			$('#action_box').show(200);
-		} else {
-			//			if ($('#action_box').is(":visible")) {
-			//				$('#action_box').hide();
-			//			}
-		}
-	});
-	
-	socket.on('table add card',function(data){
-		console.log('table add card',data);
-		if(data&&data.card_name){
-			Global.table.getCardFromPlayer(data.card_name);
-		}
-	});
-
-	function countDown(num) {
-		if ($('.count_down').length == 0) {
-			$('body').append('<h1 class="count_down">' + num.toString() + '</h1>');
-		}
-		setTimeout(function () {
-			$('.count_down').remove();
-		}, 950);
-	}
-
-	$('.ready').on('click', function (e) {
-		socket.emit('ready', {
-			username: Global.username,
-			roomId: Global.roomId
-		});
-	});
-	$('.not_ready').on('click', function (e) {
-		socket.emit('not ready', {
-			username: Global.username,
-			roomId: Global.roomId
-		});
-	});
+}
+$(function() {
+	main.init();
 });

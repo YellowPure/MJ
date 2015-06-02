@@ -31,10 +31,28 @@ var view = {
 			self.stage.update();
 		});
 	},
-	setData: function (data) {
-		if (data.card_list) {
-			this.table.cards_name_list = data.card_list;
-			this.table.dealCards();
-		}
+	countDown:function (callback){
+		var num = 3;
+		var _countDown = function(num) {
+			if ($('.count_down').length == 0) {
+				$('body').append('<h1 class="count_down">' + num.toString() + '</h1>');
+			}
+			setTimeout(function () {
+				$('.count_down').remove();
+			}, 950);
+		};
+		_countDown(num);
+		var timeId = setInterval(function () {
+			num--;
+			_countDown(num);
+			console.log(num);
+			if (num == 0) {
+				clearInterval(timeId);
+				$('.count_down').remove();
+				if(typeof callback== 'function'){
+					callback();
+				}
+			}
+		}, 1000);
 	}
 }
