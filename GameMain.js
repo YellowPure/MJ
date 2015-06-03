@@ -11,6 +11,8 @@ function GameMain(option) {
 	this.cardBox = null;
 	this.machine = Object.create(Machine);
 	this.curPlayerIndex = 0;
+	//上一个操作的玩家索引
+	this.lastPlayerIndex = null;
 }
 GameMain.prototype.startGame = function() {
 	var self = this;
@@ -84,6 +86,7 @@ GameMain.prototype.turnNextPlayer = function(username) {
 	} else {
 		nextIndex = _index + 1;
 	}
+	this.lastPlayerIndex = this.curPlayerIndex;
 	this.curPlayerIndex = nextIndex;
 	console.log('player turn ', nextIndex);
 	var _name = this.playerList[nextIndex].username;
@@ -102,7 +105,37 @@ GameMain.prototype.dealCardToPlayer = function(username) {
 GameMain.prototype.stopGame = function() {
 	this.game_state = "GAME_STOP";
 };
-
+GameMain.prototype.chi = function(data){
+	var _player =this.getPlayerByName(data.username);
+	var card_name = data.card_name;
+	var prevPlayerIndex = this.getPrevPlayerIndexByCurPlayerName(_player.username);
+	// 检查上一张牌是否是从自己的上家打出的
+	if(prevPlayerIndex != this.lastPlayerIndex){
+		this.getPlayerByName(curPlayerName).socket.emit('chi error',{msg:'not from prev player'});
+		return;
+	}
+	var result = this.machine.chi(_player.cardList,card_name);
+	if(result){
+		_player.socket.emit('chi',{hand_list:[result[0],result[1]],table_card:result[2]});
+	}else{
+		_player.socket.emit('chi error',{msg:'card check error'});
+	}
+}
+GameMain.prototype.getPrevPlayerIndexByCurPlayerName = function(username){
+	var _index = -1;
+	this.playerList.forEach(function(ele,index){
+		if(ele.username == username){
+			_index=index;
+		}
+	});
+	if(_index!=-1){
+		_index-=1;
+		if(_index<0){
+			_index = this.playerList.length-1;
+		}
+	}
+	return _index;
+}
 //var GameMain = {
 //	init: function (roomId, socketId) {
 //		this.roomId = roomId || null;

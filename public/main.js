@@ -141,6 +141,15 @@ var main = {
 				Global.table.throwListAddCard(data.card_name);
 			}
 		});
+		socket.on('chi',function(data){
+			console.log('chi success',data);
+			if(data&&data.hand_list&&data.table_card){
+				Global.table.chi(data.hand_list,data.table_card);
+			}
+		});
+		socket.on('chi error',function(data){
+			console.log('chi error',data);
+		});
 	},
 	updatePlayerShow: function(list) {
 		Global.player_name_list = list;

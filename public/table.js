@@ -25,7 +25,11 @@ function Table() {
 	this.table_player_view.y = Global.canvas.height - this.row_card_height;
 	this.table_player_view.x = (Global.canvas.width - this.row_card_width * 13) / 2;
 
+	this.sub_list = [];
 	this.table_view.addChild(this.table_player_view);
+	this.table_sub_view = new createjs.Container();
+	this.table_sub_view.y = Global.canvas.height - this.row_card_height *2;
+	this.table_view.addChild(this.table_sub_view);
 
 	this.init();
 	this.initControls();
@@ -54,9 +58,12 @@ Table.prototype.initControls = function() {
 
 	this.initControl_items('chi', 0, function(ev) {
 		console.log('chi!');
-		socket.emit('chi', {
-			card_name: self.throw_card_list[self.throw_card_list.length - 1].txt
-		});
+		if (self.throw_card_list.length > 0) {
+			socket.emit('chi', {
+				card_name: self.throw_card_list[self.throw_card_list.length - 1].txt,
+				username: Global.username
+			});
+		}
 	});
 	this.initControl_items('peng', 38, function(ev) {
 		console.log('peng');
@@ -168,14 +175,14 @@ Table.prototype.playerThrowCard = function(card_name) {
 }
 Table.prototype.playerAddCards = function(card_list) {
 	var self = this;
-	card_list.forEach(function(ele){
+	card_list.forEach(function(ele) {
 		var _card = new Card({
-			name:'card_0',
-			x:0,
-			y:0,
-			card_id:0,
-			txt:ele,
-			side:1
+			name: 'card_0',
+			x: 0,
+			y: 0,
+			card_id: 0,
+			txt: ele,
+			side: 1
 		});
 		self.player_cards_list.push(_card);
 		self.table_player_view.addChild(_card.card_view);
@@ -192,20 +199,65 @@ Table.prototype.throwListAddCard = function(card_name) {
 
 	_card = new Card({
 		name: 'card_0',
-		x: this.last_pos.x,
+		x: this.row_card_width * this.throw_card_list.length,
 		y: this.last_pos.y,
 		card_id: 0,
 		txt: card_name,
 		side: 1
 	});
-
-	var info = _card.getInfo();
-	info.x = this.row_card_width * this.throw_card_count;
-	var __card = new Card(info);
-	this.throw_card_list.push(__card);
-	this.table_show_view.addChild(__card.card_view);
+	this.throw_card_list.push(_card);
+	this.table_show_view.addChild(_card.card_view);
 	this.throw_card_count++;
 }
+Table.prototype.chi = function (hand_list , table_card){
+	var _card_list = hand_list;
+	_card_list.push(table_card);
+	_card_list.sort();
+	this.tableRemoveCard(table_card);
+	this.playerRemoveCards(hand_list);
+	this.subAddCardList(_card_list);
+}
+Table.prototype.tableRemoveCard = function(card_name){
+	console.log('tableRemoveCard',this.throw_card_list,card_name);
+	var _index = -1;
+	var _arr = this.throw_card_list;
+	for (var i = _arr.length-1 ; i >=0 ; i--) {
+		if(_arr[i].txt == card_name){
+			this.table_show_view.removeChild(_arr[i].card_view);
+			this.throw_card_list.splice(i,1);
+			break;
+		}
+	}
+};
+Table.prototype.playerRemoveCards = function (hand_list){
+	console.log('playerRemoveCards');
+	var _arr = this.player_cards_list;
+	for (var i = 0; i < _arr.length; i++) {
+		var element = _arr[i];
+		for(var j =0 ;j< hand_list.length; j++){
+			if(element.txt == hand_list[j]){
+				this.table_player_view.removeChild(element.card_view);
+				this.player_cards_list.splice(i,1);
+				break;
+			}
+		}
+	}
+	this.playerSortCards();
+};
+Table.prototype.subAddCardList = function(card_list){
+	console.log('subAddCardList');
+	for (var i = 0; i < card_list.length; i++) {
+		var _card = new Card({
+			x:this.row_card_width *this.sub_list.length,
+			y:0,
+			card_id:0,
+			txt:card_list[i],
+			side:1
+		});
+		this.table_sub_view.addChild(_card.card_view);
+		this.sub_list.push(_card);
+	}
+};
 Table.prototype.playerSortCards = function() {
 	console.log(this.player_cards_list, "length:", this.player_cards_list.length);
 	for (var i = 0; i < this.player_cards_list.length; i++) {

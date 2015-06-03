@@ -9,6 +9,7 @@ Global.io = io;
 //console.log(Global,'Global');
 server.listen(port, function () {
 	console.log('listening on %d', port);
+	debugger;
 })
 app.use(express.static(__dirname + '/public'));
 var rooms= {};
@@ -162,6 +163,7 @@ io.on('connection', function (socket) {
 	});
 	socket.on('chi', function (data) {
 		console.log("chi card", data);
+		rooms[socket.roomId].gameMain.chi(data);
 	});
 //	socket.on('end animated',function(data){
 //		var count=0;
