@@ -120,6 +120,16 @@ GameMain.prototype.chi = function(data){
 	}else{
 		_player.socket.emit('chi error',{msg:'card check error'});
 	}
+};
+GameMain.prototype.peng = function(data){
+	var _player = this.getPlayerByName(data.username);
+	var card_name = data.card_name;
+	var result = this.machine.peng(_player.cardList,card_name);
+	if(result){
+		_player.socket.emit('peng',{hand_list:[result[0],result[1]],table_card:result[2]});
+	}else{
+		_player.socket.emit('peng error',{msg:'card check error'});
+	}
 }
 GameMain.prototype.getPrevPlayerIndexByCurPlayerName = function(username){
 	var _index = -1;

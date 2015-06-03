@@ -165,6 +165,10 @@ io.on('connection', function (socket) {
 		console.log("chi card", data);
 		rooms[socket.roomId].gameMain.chi(data);
 	});
+	socket.on('peng', function (data){
+		console.log('peng',data);
+		rooms[socket.roomId].gameMain.peng(data);
+	})
 //	socket.on('end animated',function(data){
 //		var count=0;
 //		if(data&&data.name){

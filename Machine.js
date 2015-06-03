@@ -80,7 +80,7 @@ var Machine = {
 		// console.log(two_card_arr,match_card,'three_card_arr');
 		for (var i = 0; i < two_card_arr.length; i++) {
 			var _res = check_three_card(two_card_arr[i][0],two_card_arr[i][1],match_card);
-			console.log('_res',_res);
+//			console.log('_res',_res);
 			if(_res){
 				result = _res;
 			}
@@ -88,22 +88,45 @@ var Machine = {
 		console.log('check chi result',result);
 		return result;
 	},
-	peng: function(card_one, card_two, socket) {
-		var match_card = table.lastCard();
+	peng: function(card_list , match_card) {
+		var self = this;
+		var result = null;
+		var match_type = match_card.split('_')[1];
+		var _arr = [];
+		var two_card_arr= [];
+		card_list.forEach(function(ele) {
+			var _type = ele.split('_')[1];
+			if (_type == match_type) {
+				_arr.push(ele);
+			}
+		});
+		_arr.sort();
+		for (var i = 0; i < _arr.length; i++) {
+			var j=i+1;
+			if (j<_arr.length){
+				two_card_arr.push([_arr[i],_arr[j]]);
+			}
+		}
+		for (var i = 0; i < two_card_arr.length; i++) {
+			var _res = self.check_peng(two_card_arr[i][0],two_card_arr[i][1],match_card);
+			if(_res){
+				result = _res;
+			}
+		}
+		return result;
+	},
+	check_peng:function(card_one,card_two,match_card){
+		var result = null;
 		var match_arr = [match_card, card_one, card_two];
 		var type_arr = this.getTypeByMatchArr(match_arr);
 		var num_arr = this.getNumsByMatchArr(match_arr);
 
 		var same_type = this.checkArrIsEqual(type_arr);
 		var same_num = this.checkArrIsEqual(num_arr);
-
-		if (same_num && same_type) {
-			//满足碰的条件
-		} else {
-			socket.emit('not able peng', {
-				error: '不满足条件'
-			});
+		if(same_num&&same_type){
+			result = match_arr;
 		}
+		return result;
 	},
 	gang: function(card_one, card_two, card_three) {
 		var match_card = table.lastCard();

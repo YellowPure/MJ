@@ -150,6 +150,14 @@ var main = {
 		socket.on('chi error',function(data){
 			console.log('chi error',data);
 		});
+		socket.on('peng',function(data){
+			if(data&&data.hand_list&&data.table_card){
+				Global.table.peng(data.hand_list,data.table_card);
+			}
+		});
+		socket.on('peng error',function(data){
+			console.log('peng error',data.msg);
+		});
 	},
 	updatePlayerShow: function(list) {
 		Global.player_name_list = list;
