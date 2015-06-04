@@ -78,9 +78,9 @@ var Machine = {
 			}
 		}
 		// console.log(two_card_arr,match_card,'three_card_arr');
+		// 此处有一个bug待修复 只返回最后一个符合条件的结果 应该是返回所有符合条件结果的数组
 		for (var i = 0; i < two_card_arr.length; i++) {
 			var _res = check_three_card(two_card_arr[i][0],two_card_arr[i][1],match_card);
-//			console.log('_res',_res);
 			if(_res){
 				result = _res;
 			}
@@ -128,42 +128,89 @@ var Machine = {
 		}
 		return result;
 	},
-	gang: function(card_one, card_two, card_three) {
-		var match_card = table.lastCard();
-		var match_arr = [match_card, card_one, card_two, card_three];
-		var type_arr = this.getTypeByMatchArr(match_arr);
-		var num_arr = this.getNumsByMatchArr(match_arr);
-
-		var same_type = this.checkArrIsEqual(type_arr);
-		var same_num = this.checkArrIsEqual(num_arr);
-
-
-
-		if (same_num && same_type || this.check_gane()) {
-			//
-		} else {
-			Global.io.to(this.roomId).emit('not able gane', {
-				error: '不满足条件'
-			});
+	gang: function(card_list , match_card) {
+		var result =null;
+		//先check card_list中是否满足条件
+		var result1 = this.check_player_list_gang(card_list);
+		//再check table_card最后一张
+		if(match_card){
+			var result2 = this.check_table_gang(card_list,match_card);
 		}
+		//此处有bug 当玩家手中有符合条件的杠时 牌桌中也有符合的情况下只返回一种
+		if(result1){
+			result = result1;
+		}else if(result2){
+			result = result2;
+		}
+		return result;
 	},
-	check_gang: function() {
-		var _check = {};
-		var _indexArr = [];
-		this.card_list.forEach(function(val, index) {
-			if (_check[val] == undefined) {
-				_check[val] = new Array();
-				_indexArr.push(_check[val]);
-			} else {
-				_check[val].push(index);
-			}
-		});
-		_indexArr.forEach(function(val) {
-			if (val.length == 4) {
+	check_table_gang:function(card_list,match_card){
+		var result = null;
+		var match_type = match_card.split('_')[1];
+		var match_num = match_card.split('_')[0];
+		var player_match_arr = card_list.every(function(ele){
+			var type = ele.split('_')[1];
+			var num =ele.split('_')[0];
+			if(type == match_type && num == match_num){
 				return true;
+			}else{
+				return false;
 			}
 		});
-		return false;
+		if(player_match_arr.length==4){
+			result = player_match_arr;
+		}
+		return result; 	
+	},
+	check_player_list_gang :function(card_list){
+		var result = null;
+		var _typeObj = {};
+		console.log('card_list',card_list);
+		for (var i = 0; i < card_list.length; i++) {
+			var ele = card_list[i];
+			var eleType =ele.split('_')[1];
+			var eleNum = ele.split('_')[0];
+			//把玩家手中牌分类 
+			if(!_typeObj[eleType]){
+				_typeObj[eleType]= [];
+			}
+			_typeObj[eleType].push(eleNum);
+		};
+		// 获取符合条件的 一类牌 中的所有可能情况数组
+		var _arr = [];
+		for (var p in _typeObj){
+			if(_typeObj[p].length>3){
+				var nums_arr = _typeObj[p];
+				nums_arr.sort();
+				for(var j=0;j<nums_arr.length;j++){
+					var k = j+1;
+					var l = j+2;
+					var n = j+3;
+					if(k<nums_arr.length&&l<nums_arr.length&&n<nums_arr.length){
+						_arr.push([nums_arr[j],nums_arr[k],nums_arr[l],nums_arr[n]]);
+					}
+				}
+			}
+		}
+		console.log('_arr',_arr);
+		// 此处有一个bug待修复 只返回最后一个符合条件的结果 应该是返回所有符合条件结果的数组
+		for(var m = 0 ;m<_arr.length;m++){
+			var res = this.check_gang(_arr);
+			if(res){
+				result = res;
+			}
+		}
+		
+		return result;
+	},
+	check_gang: function(arr) {
+		var result =null;
+		var same_num = this.checkArrIsEqual(arr);
+
+		if(same_num){
+			result = arr;
+		}
+		return result;
 	},
 	hu: function() {
 

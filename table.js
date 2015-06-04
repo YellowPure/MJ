@@ -13,7 +13,11 @@ Table.prototype.delCard = function (cardName){
 	}	
 };
 Table.prototype.lastCard = function (){
-	return this.cardList[this.cardList.length-1];	
+	var result = null;
+	if(this.cardList.length>0){
+		result = this.cardList[this.cardList.length-1];	
+	}
+	return result;
 };
 //var table={
 //	list:{},

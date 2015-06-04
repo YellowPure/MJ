@@ -22,10 +22,10 @@ GameMain.prototype.startGame = function() {
 	//	this.socket.emit('count down');
 	this.table = new Table();
 	this.cardBox = new CardBox();
-	this.playerList.forEach(function(ele,index) {
-		var _num=13;
-		if(index==0){
-			_num=14;
+	this.playerList.forEach(function(ele, index) {
+		var _num = 13;
+		if (index == 0) {
+			_num = 14;
 		}
 		var cards = self.cardBox.dealCards(_num);
 		ele.cardList = cards;
@@ -105,214 +105,126 @@ GameMain.prototype.dealCardToPlayer = function(username) {
 GameMain.prototype.stopGame = function() {
 	this.game_state = "GAME_STOP";
 };
-GameMain.prototype.chi = function(data){
-	var _player =this.getPlayerByName(data.username);
-	var card_name = data.card_name;
+GameMain.prototype.chi = function(name) {
+	var _player = this.getPlayerByName(name);
+
 	var prevPlayerIndex = this.getPrevPlayerIndexByCurPlayerName(_player.username);
 	// 检查上一张牌是否是从自己的上家打出的
-	if(prevPlayerIndex != this.lastPlayerIndex){
-		this.getPlayerByName(curPlayerName).socket.emit('chi error',{msg:'not from prev player'});
+	if (prevPlayerIndex != this.lastPlayerIndex) {
+		this.getPlayerByName(curPlayerName).socket.emit('chi', {
+			result: -1,
+			msg: 'not from prev player'
+		});
 		return;
 	}
-	var result = this.machine.chi(_player.cardList,card_name);
-	if(result){
-		_player.socket.emit('chi',{hand_list:[result[0],result[1]],table_card:result[2]});
-	}else{
-		_player.socket.emit('chi error',{msg:'card check error'});
+	var card_name = this.table.lastCard();
+	if (card_name) {
+		var result = this.machine.chi(_player.cardList, card_name);
+		if (result) {
+			_player.socket.emit('chi', {
+				hand_list: [result[0], result[1]],
+				table_card: result[2]
+			});
+		} else {
+			_player.socket.emit('chi', {
+				result: -1,
+				msg: 'card check error'
+			});
+		}
+	} else {
+		_player.socket.emit('chi', {
+			result: -1,
+			msg: 'card check error'
+		});
 	}
+
 };
-GameMain.prototype.peng = function(data){
-	var _player = this.getPlayerByName(data.username);
-	var card_name = data.card_name;
-	var result = this.machine.peng(_player.cardList,card_name);
-	if(result){
-		_player.socket.emit('peng',{hand_list:[result[0],result[1]],table_card:result[2]});
-	}else{
-		_player.socket.emit('peng error',{msg:'card check error'});
+GameMain.prototype.peng = function(name) {
+	var _player = this.getPlayerByName(name);
+	var card_name = this.table.lastCard();
+	if (card_name) {
+		var result = this.machine.peng(_player.cardList, card_name);
+		if (result) {
+			_player.socket.emit('peng', {
+				result: 0,
+				hand_list: [result[0], result[1]],
+				table_card: result[2]
+			});
+		} else {
+			_player.socket.emit('peng', {
+				result: -1,
+				msg: 'card check error'
+			});
+		}
+	} else {
+		_player.socket.emit('peng', {
+			result: -1,
+			msg: 'card check error'
+		});
 	}
-}
-GameMain.prototype.getPrevPlayerIndexByCurPlayerName = function(username){
+
+};
+GameMain.prototype.getPrevPlayerIndexByCurPlayerName = function(username) {
 	var _index = -1;
-	this.playerList.forEach(function(ele,index){
-		if(ele.username == username){
-			_index=index;
+	this.playerList.forEach(function(ele, index) {
+		if (ele.username == username) {
+			_index = index;
 		}
 	});
-	if(_index!=-1){
-		_index-=1;
-		if(_index<0){
-			_index = this.playerList.length-1;
+	if (_index != -1) {
+		_index -= 1;
+		if (_index < 0) {
+			_index = this.playerList.length - 1;
 		}
 	}
 	return _index;
+};
+GameMain.prototype.gang = function(name) {
+	var _player = this.getPlayerByName(name);
+	var card_name = this.table.lastCard();
+	var result = this.machine.gang(_player.cardList, card_name);
+	if (result) {
+		_player.socket.emit('gang', {
+			result: 0,
+			hand_list: [result[0], result[1],result[2]],
+			table_card: result[3]
+		});
+	} else {
+		_player.socket.emit('gang', {
+			result: -1,
+			msg: 'card check error'
+		});
+	}
+};
+GameMain.prototype.checkTurn = function() {
+	var pass = true;
+	var result_hu = this.checkHu();
+	var result_peng = this.checPeng();
+	if (result_peng.length == 0 && result_hu.length == 0) {
+		pass = true;
+	} else {
+		pass = false;
+	}
+	return pass;
+};
+GameMain.prototype.checkHu = function() {
+	var result = true;
+	return result;
+};
+GameMain.prototype.checkPeng = function() {
+	var result = [];
+	var table_last_card = this.table.lastCard();
+	for (var i = 0; i < this.playerList.length; i++) {
+		var _ = this.machine.peng(this.playerList[i], table_last_card);
+		if (_) {
+			result.push({
+				player: this.playerList[i]
+			});
+		}
+	}
+	return result;
+};
+GameMain.prototype.wait = function() {
+	this.curPlayerIndex = -1;
 }
-//var GameMain = {
-//	init: function (roomId, socketId) {
-//		this.roomId = roomId || null;
-//		this.socketId = socketId;
-//		this.players = [];
-//		this.card_list = [];
-//		this.game_state = 'NOT_BEGIN';
-//		this.player_nums = 2;
-//		this.curPlayerIndex = 0;
-//		var self = this;
-//		console.log('new game main', this.roomId, this.socketId);
-//	},
-//	addPlayer: function (playername) {
-//		console.log('do here!');
-//		this.players.push({ name: playername, ready: false });
-//	},
-//	addPlayers: function (list) {
-//		var self = this;
-//		list.forEach(function (value, index) {
-//			self.addPlayer(value);
-//		})
-//	},
-//	delPlayer: function (player) {
-//		console.log('doo here!');
-//		for (var i = 0; i < this.players.length; i++) {
-//			if (this.players[i].name == player) {
-//				this.players.splice(i, 1);
-//			}
-//		}
-//	},
-//	setPlayerReady: function (name) {
-//		console.log("setPlayerReady:", this.roomId, name);
-//		for (var i = 0; i < Global.roomPlayers[this.roomId].length; i++) {
-//			if (Global.roomPlayers[this.roomId][i].username == name) {
-//				Global.roomPlayers[this.roomId][i].ready = true;
-//			}
-//		}
-//	},
-//	setCurPlayerByData: function (data) {
-//		var self = this;
-//		var arr = Global.roomPlayer(self.roomId);
-//		var index = arr.indexOf(data.username);
-//
-//	},
-//	setPlayerNotReady: function (name) {
-//		for (var i = 0; i < Global.roomPlayers[this.roomId].length; i++) {
-//			if (Global.roomPlayers[this.roomId][i].username == name) {
-//				Global.roomPlayers[this.roomId][i].ready = false;
-//			}
-//		}
-//	},
-//	getPlayerInfoByName: function (playerName) {
-//		var result = null;
-//		for (var i = 0; i < this.players.length; i++) {
-//			if (this.players[i].name == playername) {
-//				result = this.players[i];
-//			}
-//		};
-//		return result;
-//	},
-//	getPlayerIndexByName: function (username) {
-//		var _index = null;
-//		Global.roomPlayers[this.roomId].forEach(function (ele, index) {
-//			if (ele.username == username) {
-//				_index = index;
-//			}
-//		});
-//		return _index;
-//	},
-//	checkToStartGame: function () {
-//		var pass = true;
-//		var limit_num = this.player_nums;//debug:1;  build:4
-//		console.log("(Global.roomPlayers[this.roomId].length", Global.roomPlayers[this.roomId].length);
-//		if (Global.roomPlayers[this.roomId].length == limit_num) {
-//			for (var i = 0; i < Global.roomPlayers[this.roomId].length; i++) {
-//				if (Global.roomPlayers[this.roomId][i].ready == false) {
-//					pass = false;
-//				}
-//			}
-//		} else {
-//			pass = false;
-//		}
-//		console.log('all player in!!', pass);
-//		return pass;
-//	},
-//	countDown: function (callback, socket) {
-//		var self = this;
-//		console.log('count down', this.roomId);
-//		socket.emit('count down');
-//		setTimeout(function () {
-//			if (callback && typeof callback == "function") {
-//				callback();
-//			}
-//		}, 3000);
-//	},
-//	startGame: function (socket) {
-//		this.game_state = 'GAME_START';
-//		this.getCards();
-//		this.card_list.sort();
-//		//	this.socket.emit('count down');
-//		console.log(socket.username, 'username');
-//		socket.emit('start game', { card_list: this.card_list });
-//	},
-//	endAnimated: function (username) {
-//		var _index = this.getPlayerIndexByName(username);
-//		if (_index == this.curPlayerIndex) {
-//			this.playerGetOneCard();
-//		}
-//	},
-//	playerGetOneCard: function () {
-//		var username = Global.roomPlayers[this.roomId][this.curPlayerIndex].username;
-//		var arr = Global.io.sockets.sockets;
-//		var _sk;
-//		arr.forEach(function (ele) {
-//			if (ele.username == username) {
-//				_sk = ele;
-//			}
-//		});
-//		if (_sk) {
-//			var card = mj_list.dealOneCard(_sk.roomId);
-//			console.log('player get one card!');
-//			_sk.emit('player get one card', { name: _sk.username, card: card });
-//		}
-//	},
-//
-//	getCards: function () {
-//		console.log(mj_list.list[this.roomId].length, 'gameMain getCards');
-//		this.card_list = mj_list.dealCards(this.roomId);
-//		console.log('card_list', this.card_list.length);
-//	},
-//	throwOneCard: function (name, socketId, username) {
-//		console.log('gameMain throwOneCard', this.socketId);
-//		var _index = this.card_list.indexOf(name);
-//		var _playerIndex = this.getPlayerIndexByName(username);
-//		console.log('_playerIndex', _playerIndex, this.curPlayerIndex);
-//		if (_playerIndex != this.curPlayerIndex) {
-//			console.log('error : not cur action player!');
-//			return;
-//		}
-//		if (_index != -1) {
-//			this.card_list.splice(_index, 1);
-//			var $index = Global.io.sockets.sockets;
-//		}
-//		table.addCard(this.roomId, name);
-//		this.turnNextPlayer(username);
-//	},
-//	turnNextPlayer: function (username) {
-//		var nextIndex = 0;
-//		var self = this;
-//		var _index = this.getPlayerIndexByName(username);
-//		if (_index >= self.player_nums - 1) {
-//			nextIndex = 0;
-//		} else {
-//			nextIndex = _index + 1;
-//		}
-//		this.curPlayerIndex = nextIndex;
-//		console.log('player turn ', nextIndex);
-//		this.playerGetOneCard();
-//		Global.io.to(this.roomId).emit('player turn', { name: Global.roomPlayers[this.roomId][nextIndex].username });
-//	},
-//	pauseGame: function () {
-//		this.game_state = "GAME_PAUSE";
-//	},
-//	endGame: function () {
-//		this.game_state = "GAME_END";
-//	},
-//
-//
-//}
 module.exports = GameMain;

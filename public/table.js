@@ -35,7 +35,7 @@ function Table() {
 	this.initControls();
 	this.bindEvent();
 }
-Table.prototype.init = function () {
+Table.prototype.init = function() {
 	var card = new Card({
 		name: 'card_hide',
 		x: 0,
@@ -48,7 +48,7 @@ Table.prototype.init = function () {
 	this.last_pos.y = card.card_view.y;
 	this.table_hide_view.addChild(card.card_view);
 }
-Table.prototype.initControls = function () {
+Table.prototype.initControls = function() {
 	var self = this;
 	this.control_view = new createjs.Container();
 	this.control_view.x = parseInt(Global.canvas.width - 4 * self.row_card_width);
@@ -56,32 +56,23 @@ Table.prototype.initControls = function () {
 	this.table_view.addChild(this.control_view);
 
 
-	this.initControl_items('chi', 0, function (ev) {
+	this.initControl_items('chi', 0, function(ev) {
 		console.log('chi!');
-		if (self.throw_card_list.length > 0) {
-			socket.emit('chi', {
-				card_name: self.throw_card_list[self.throw_card_list.length - 1].txt,
-				username: Global.username
-			});
-		}
+		socket.emit('chi');
 	});
-	this.initControl_items('peng', 38, function (ev) {
+	this.initControl_items('peng', 38, function(ev) {
 		console.log('peng');
-		if (self.throw_card_list.length > 0) {
-			socket.emit('peng',{
-				card_name: self.throw_card_list[self.throw_card_list.length - 1].txt,
-				username: Global.username
-			})
-		}
+		socket.emit('peng');
 	});
-	this.initControl_items('gang', 76, function (ev) {
+	this.initControl_items('gang', 76, function(ev) {
 		console.log('gang');
+		socket.emit('gang');
 	});
-	this.initControl_items('hu', 114, function (ev) {
+	this.initControl_items('hu', 114, function(ev) {
 		console.log('hu');
 	})
 }
-Table.prototype.initControl_items = function (txt, pos_x, callback) {
+Table.prototype.initControl_items = function(txt, pos_x, callback) {
 	var item = new createjs.Container();
 	this.control_view.addChild(item);
 	item.x = pos_x;
@@ -93,13 +84,13 @@ Table.prototype.initControl_items = function (txt, pos_x, callback) {
 	item.addChild(control_chi_txt);
 	control_chi_txt.y = 8;
 
-	item.addEventListener('click', function (ev) {
+	item.addEventListener('click', function(ev) {
 		if (typeof callback === 'function') {
 			callback(ev);
 		}
 	});
 }
-Table.prototype.dealCards = function () {
+Table.prototype.dealCards = function() {
 	var self = this;
 	self.cards_list = [];
 	for (var index = 0; index < game_data.player_card_list.length; index++) {
@@ -116,7 +107,7 @@ Table.prototype.dealCards = function () {
 	}
 	self.animationCards();
 }
-Table.prototype.animationCards = function () {
+Table.prototype.animationCards = function() {
 	var self = this;
 	var count = 0;
 	var half_cards_list_width = parseInt(self.cards_list.length * this.row_card_width / 2);
@@ -134,10 +125,10 @@ Table.prototype.animationCards = function () {
 	}
 	handler();
 }
-Table.prototype.dealCardsToPlayers = function () {
+Table.prototype.dealCardsToPlayers = function() {
 	var self = this;
 
-	this.cards_list.forEach(function (val, index) {
+	this.cards_list.forEach(function(val, index) {
 		val.side = 1;
 
 		val.y = 0;
@@ -148,10 +139,10 @@ Table.prototype.dealCardsToPlayers = function () {
 		self.player_cards_list.push(card);
 	});
 }
-Table.prototype.bindEvent = function () {
+Table.prototype.bindEvent = function() {
 	var self = this;
 	//	socket.emit("player get one card", Global.username);
-	socket.on("player get one card", function (data) {
+	socket.on("player get one card", function(data) {
 		console.log("player get one card", data);
 		var info = {
 			x: 0,
@@ -166,11 +157,11 @@ Table.prototype.bindEvent = function () {
 		self.playerSortCards();
 	});
 }
-Table.prototype.playerThrowCard = function (card_name) {
+Table.prototype.playerThrowCard = function(card_name) {
 	this.throwListAddCard(card_name);
 	var self = this;
 	var _index = -1;
-	this.player_cards_list.forEach(function (element, index) {
+	this.player_cards_list.forEach(function(element, index) {
 		if (element.txt == card_name) {
 			_index = index;
 		}
@@ -179,9 +170,9 @@ Table.prototype.playerThrowCard = function (card_name) {
 	self.player_cards_list.splice(_index, 1);
 	self.playerSortCards();
 }
-Table.prototype.playerAddCards = function (card_list) {
+Table.prototype.playerAddCards = function(card_list) {
 	var self = this;
-	card_list.forEach(function (ele) {
+	card_list.forEach(function(ele) {
 		var _card = new Card({
 			name: 'card_0',
 			x: 0,
@@ -199,7 +190,7 @@ Table.prototype.playerAddCards = function (card_list) {
 	// self.table_player_view.addChild(_card.card_view);
 	self.playerSortCards();
 };
-Table.prototype.throwListAddCard = function (card_name) {
+Table.prototype.throwListAddCard = function(card_name) {
 	var _index;
 	var _card = null;
 
@@ -215,7 +206,7 @@ Table.prototype.throwListAddCard = function (card_name) {
 	this.table_show_view.addChild(_card.card_view);
 	this.throw_card_count++;
 }
-Table.prototype.chi = function (hand_list, table_card) {
+Table.prototype.chi = function(hand_list, table_card) {
 	var _card_list = hand_list;
 	_card_list.push(table_card);
 	_card_list.sort();
@@ -223,7 +214,7 @@ Table.prototype.chi = function (hand_list, table_card) {
 	this.playerRemoveCards(hand_list);
 	this.subAddCardList(_card_list);
 }
-Table.prototype.tableRemoveCard = function (card_name) {
+Table.prototype.tableRemoveCard = function(card_name) {
 	console.log('tableRemoveCard', this.throw_card_list, card_name);
 	var _index = -1;
 	var _arr = this.throw_card_list;
@@ -235,7 +226,7 @@ Table.prototype.tableRemoveCard = function (card_name) {
 		}
 	}
 };
-Table.prototype.playerRemoveCards = function (hand_list) {
+Table.prototype.playerRemoveCards = function(hand_list) {
 	console.log('playerRemoveCards');
 	var _arr = this.player_cards_list;
 	for (var i = 0; i < _arr.length; i++) {
@@ -250,7 +241,7 @@ Table.prototype.playerRemoveCards = function (hand_list) {
 	}
 	this.playerSortCards();
 };
-Table.prototype.subAddCardList = function (card_list) {
+Table.prototype.subAddCardList = function(card_list) {
 	console.log('subAddCardList');
 	for (var i = 0; i < card_list.length; i++) {
 		var _card = new Card({
@@ -264,17 +255,27 @@ Table.prototype.subAddCardList = function (card_list) {
 		this.sub_list.push(_card);
 	}
 };
-Table.prototype.playerSortCards = function () {
+Table.prototype.playerSortCards = function() {
 	console.log(this.player_cards_list, "length:", this.player_cards_list.length);
 	for (var i = 0; i < this.player_cards_list.length; i++) {
 		this.player_cards_list[i].card_view.x = i * this.row_card_width;
 	}
 };
-Table.prototype.peng = function(hand_list,table_card){
+Table.prototype.peng = function(hand_list, table_card) {
 	var card_list = hand_list;
 	card_list.push(table_card);
 	card_list.sort();
 	this.tableRemoveCard(table_card);
+	this.playerRemoveCards(hand_list);
+	this.subAddCardList(card_list);
+};
+Table.prototype.gang = function (hand_list,table_card){
+	var card_list = hand_list;
+	if(table_card){
+		card_list.push(table_card);
+		this.tableRemoveCard(table_card);
+	}
+	card_list.sort();
 	this.playerRemoveCards(hand_list);
 	this.subAddCardList(card_list);
 };

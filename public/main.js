@@ -142,21 +142,34 @@ var main = {
 			}
 		});
 		socket.on('chi',function(data){
-			console.log('chi success',data);
-			if(data&&data.hand_list&&data.table_card){
+			console.log('chi',data);
+			if(data.result !=-1){
 				Global.table.chi(data.hand_list,data.table_card);
+			}else{
+				console.log('chi error',data.msg);
 			}
-		});
-		socket.on('chi error',function(data){
-			console.log('chi error',data);
+			if(data&&data.hand_list&&data.table_card){
+				
+			}
 		});
 		socket.on('peng',function(data){
-			if(data&&data.hand_list&&data.table_card){
+			if(data.result!=-1){
 				Global.table.peng(data.hand_list,data.table_card);
+			}else{
+				console.log('peng error',data.msg);
 			}
 		});
-		socket.on('peng error',function(data){
-			console.log('peng error',data.msg);
+		socket.on('gang',function(data){
+			if(data.result!=-1){
+				if(data.table_card){
+					Global.table.peng(data.hand_list,data.table_card);
+				}else{
+					Global.table.peng(data.hand_list);
+				}
+				
+			}else{
+				console.log('gang error',data.msg);
+			}
 		});
 	},
 	updatePlayerShow: function(list) {

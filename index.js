@@ -161,13 +161,17 @@ io.on('connection', function (socket) {
 //		GameMain.setPlayerNotReady(data.username);
 		
 	});
-	socket.on('chi', function (data) {
-		console.log("chi card", data);
-		rooms[socket.roomId].gameMain.chi(data);
+	socket.on('chi', function () {
+		console.log("chi card");
+		rooms[socket.roomId].gameMain.chi(socket.username);
 	});
-	socket.on('peng', function (data){
-		console.log('peng',data);
-		rooms[socket.roomId].gameMain.peng(data);
+	socket.on('peng', function (){
+		console.log('peng');
+		rooms[socket.roomId].gameMain.peng(socket.username);
+	});
+	socket.on('gang', function(){
+		console.log('gang');
+		rooms[socket.roomId].gameMain.gang(socket.username);
 	})
 //	socket.on('end animated',function(data){
 //		var count=0;
