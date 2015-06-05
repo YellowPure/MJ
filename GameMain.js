@@ -62,7 +62,21 @@ GameMain.prototype.getThrowCard = function(cardName, socket) {
 		card_name: cardName
 	});
 	this.table.addCard(cardName);
-	this.turnNextPlayer(_player.username);
+	var check_result = this.checkAllPlayerAblePeng();
+	//有玩家可以抢碰牌桌中的牌
+	if(check_result.length>0){
+		this.waitPlayerAction(check_result);
+	}else{
+		this.turnNextPlayer(_player.username);
+	}
+	
+};
+GameMain.prototype.waitPlayerAction = function (playerInfoArr){
+	if(playerInfoArr.length>0){
+		this.curPlayerIndex = playerInfoArr[0].index;
+		playerInfoArr[0].socket.emit('player turn',{index:this.curPlayerIndex,type:'peng'});
+		playerInfoArr[0].socket.broadcast.emit('wait player',{username:playerInfoArr[0].username});
+	}
 };
 GameMain.prototype.getPlayerByName = function(username) {
 	var result = null;
@@ -85,7 +99,7 @@ GameMain.prototype.turnNextPlayer = function(username) {
 	}
 	this.lastPlayerIndex = this.curPlayerIndex;
 	this.curPlayerIndex = nextIndex;
-	console.log('player turn ', nextIndex);
+	console.log('player turn', {index:nextIndex,type:'normal'});
 	var _name = this.playerList[nextIndex].username;
 	Global.io.to(this.roomId).emit('player turn', {
 		name: _name
@@ -137,30 +151,32 @@ GameMain.prototype.chi = function(name) {
 
 };
 GameMain.prototype.peng = function(name) {
-	var _player = this.getPlayerByName(name);
-	var card_name = this.table.lastCard();
-	if (card_name) {
-		var result = this.machine.peng(_player.cardList, card_name);
-		if (result) {
-			_player.socket.emit('peng', {
-				result: 0,
-				hand_list: [result[0], result[1]],
-				table_card: result[2]
-			});
-		} else {
-			_player.socket.emit('peng', {
-				result: -1,
-				msg: 'card check error'
-			});
-		}
+	var result = this.checkPeng(name);
+	if (result) {
+		_player.socket.emit('peng', {
+			result: 0,
+			hand_list: [result[0], result[1]],
+			table_card: result[2]
+		});
 	} else {
 		_player.socket.emit('peng', {
 			result: -1,
 			msg: 'card check error'
 		});
 	}
-
 };
+GameMain.prototype.checkPeng = function(name) {
+	var result = null;
+	var _player = this.getPlayerByName(name);
+	var card_name = this.table.lastCard();
+	if (card_name) {
+		var _result = this.machine.peng(_player.cardList, card_name);
+		if (_result) {
+			result = _result;
+		}
+	}
+	return result;
+}
 GameMain.prototype.getPrevPlayerIndexByCurPlayerName = function(username) {
 	var _index = -1;
 	this.playerList.forEach(function(ele, index) {
@@ -201,6 +217,16 @@ GameMain.prototype.gang = function(name) {
 		});
 	}
 };
+GameMain.prototype.checkAllPlayerAblePeng = function() {
+	var results = [];
+	for (var i = 0; i < this.playerList.length; i++) {
+		var _result = this.checkPeng(this.playerList[i].username);
+		if (_result) {
+			results.push({result:_result,player:this.playerList[i],index:i});
+		}
+	}
+	return results;
+};
 GameMain.prototype.checkTurn = function() {
 	var pass = true;
 	var result_hu = this.checkHu();
@@ -214,19 +240,6 @@ GameMain.prototype.checkTurn = function() {
 };
 GameMain.prototype.checkHu = function() {
 	var result = true;
-	return result;
-};
-GameMain.prototype.checkPeng = function() {
-	var result = [];
-	var table_last_card = this.table.lastCard();
-	for (var i = 0; i < this.playerList.length; i++) {
-		var _ = this.machine.peng(this.playerList[i], table_last_card);
-		if (_) {
-			result.push({
-				player: this.playerList[i]
-			});
-		}
-	}
 	return result;
 };
 GameMain.prototype.wait = function() {

@@ -26,7 +26,7 @@ var view = {
 			canvas.width = $('.game_main').width();
 			canvas.height = $('.game_main').height();
 		});
-
+		createjs.Ticker.setFPS(60);
 		createjs.Ticker.addEventListener('tick', function () {
 			self.stage.update();
 		});

@@ -5,7 +5,8 @@ var Global = {
 	player_name_list: null,
 	table: null,
 	canvas: null,
-	socketId: null
+	socketId: null,
+	pengActionOnly:false
 };
 var main = {
 	init: function() {
@@ -127,7 +128,10 @@ var main = {
 			}
 		});
 		socket.on('player turn', function(data) {
-			console.log(data.name, 'player turn');
+			console.log(data, 'player turn');
+			if(data.type == 'peng'){
+				Global.pengActionOnly = true;
+			}
 		});
 		socket.on('throw success', function(data) {
 			console.log('throw success', data);

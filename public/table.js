@@ -58,7 +58,9 @@ Table.prototype.initControls = function() {
 
 	this.initControl_items('chi', 0, function(ev) {
 		console.log('chi!');
-		socket.emit('chi');
+		if(Global.pengActionOnly!=true){
+			socket.emit('chi');
+		}
 	});
 	this.initControl_items('peng', 38, function(ev) {
 		console.log('peng');

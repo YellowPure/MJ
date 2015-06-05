@@ -49,7 +49,7 @@ Card.prototype.getInfo=function(){
 Card.prototype.bindEvent = function() {
 	var self = this;
 	this.card_view.addEventListener('click',function(event){
-		if(self.side==1){
+		if(self.side==1&&Global.pengActionOnly!=true){
 			socket.emit('throw',{card_name:self.txt,socketId:Global.socketId,username:Global.username});
 		}
 	});
