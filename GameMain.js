@@ -17,9 +17,6 @@ function GameMain(option) {
 GameMain.prototype.startGame = function() {
 	var self = this;
 	this.game_state = 'GAME_START';
-	//	this.getCards();
-	//	this.card_list.sort();
-	//	this.socket.emit('count down');
 	this.table = new Table();
 	this.cardBox = new CardBox();
 	this.playerList.forEach(function(ele, index) {
@@ -183,12 +180,20 @@ GameMain.prototype.gang = function(name) {
 	var _player = this.getPlayerByName(name);
 	var card_name = this.table.lastCard();
 	var result = this.machine.gang(_player.cardList, card_name);
-	if (result) {
-		_player.socket.emit('gang', {
-			result: 0,
-			hand_list: [result[0], result[1],result[2]],
-			table_card: result[3]
-		});
+	if (result.result) {
+		if (result.type == 1) {
+			_player.socket.emit('gang', {
+				result: 0,
+				hand_list: result.result
+			});
+		} else if (result.type == 2) {
+			_player.socket.emit('gang', {
+				result: 0,
+				hand_list: [result[0], result[1], result[2]],
+				table_card: result[3]
+			});
+		}
+
 	} else {
 		_player.socket.emit('gang', {
 			result: -1,

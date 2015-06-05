@@ -161,11 +161,12 @@ var main = {
 		});
 		socket.on('gang',function(data){
 			if(data.result!=-1){
-				if(data.table_card){
-					Global.table.peng(data.hand_list,data.table_card);
-				}else{
-					Global.table.peng(data.hand_list);
-				}
+				console.log('data hand_list',data);
+				// if(data.table_card){
+					Global.table.gang(data.hand_list,data.table_card);
+				// }else{
+				// 	Global.table.peng(data.hand_list);
+				// }
 				
 			}else{
 				console.log('gang error',data.msg);

@@ -3,10 +3,12 @@ var Machine = {
 		var same = true;
 		for (var index = 0; index < array.length; index++) {
 			var element = array[index];
+			console.log('element   array[0]',element,array[0]);
 			if (element != array[0]) {
 				same = false;
 			}
 		}
+		console.log('same',same);
 		return same;
 	},
 	getTypeByMatchArr: function(array) {
@@ -130,6 +132,7 @@ var Machine = {
 	},
 	gang: function(card_list , match_card) {
 		var result =null;
+		var type = null;
 		//先check card_list中是否满足条件
 		var result1 = this.check_player_list_gang(card_list);
 		//再check table_card最后一张
@@ -139,24 +142,27 @@ var Machine = {
 		//此处有bug 当玩家手中有符合条件的杠时 牌桌中也有符合的情况下只返回一种
 		if(result1){
 			result = result1;
+			type = 1;
 		}else if(result2){
 			result = result2;
+			type = 2;
 		}
-		return result;
+		return {result:result,type:type};
 	},
 	check_table_gang:function(card_list,match_card){
 		var result = null;
 		var match_type = match_card.split('_')[1];
 		var match_num = match_card.split('_')[0];
-		var player_match_arr = card_list.every(function(ele){
-			var type = ele.split('_')[1];
-			var num =ele.split('_')[0];
-			if(type == match_type && num == match_num){
-				return true;
-			}else{
-				return false;
+		var player_match_arr = [];
+		for (var i = 0; i < card_list.length; i++) {
+			var ele = card_list[i];
+			var eleType =ele.split('_')[1];
+			var eleNum = ele.split('_')[0];
+			if(eleType == match_type && eleNum == match_num){
+				player_match_arr.push(ele);
 			}
-		});
+			_typeObj[eleType].push(ele);
+		};
 		if(player_match_arr.length==4){
 			result = player_match_arr;
 		}
@@ -174,10 +180,10 @@ var Machine = {
 			if(!_typeObj[eleType]){
 				_typeObj[eleType]= [];
 			}
-			_typeObj[eleType].push(eleNum);
+			_typeObj[eleType].push(ele);
 		};
 		// 获取符合条件的 一类牌 中的所有可能情况数组
-		var _arr = [];
+		var _same_type_arr = [];
 		for (var p in _typeObj){
 			if(_typeObj[p].length>3){
 				var nums_arr = _typeObj[p];
@@ -187,15 +193,16 @@ var Machine = {
 					var l = j+2;
 					var n = j+3;
 					if(k<nums_arr.length&&l<nums_arr.length&&n<nums_arr.length){
-						_arr.push([nums_arr[j],nums_arr[k],nums_arr[l],nums_arr[n]]);
+						_same_type_arr.push([nums_arr[j],nums_arr[k],nums_arr[l],nums_arr[n]]);
 					}
 				}
 			}
 		}
-		console.log('_arr',_arr);
+		console.log('_arr',_same_type_arr);
 		// 此处有一个bug待修复 只返回最后一个符合条件的结果 应该是返回所有符合条件结果的数组
-		for(var m = 0 ;m<_arr.length;m++){
-			var res = this.check_gang(_arr);
+		for(var m = 0 ;m<_same_type_arr.length;m++){
+			var res = this.check_gang(_same_type_arr[m]);
+			console.log('res',res);
 			if(res){
 				result = res;
 			}

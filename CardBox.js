@@ -51,11 +51,11 @@ CardBox.prototype.dealCards = function(cardNum) {
 		console.log(this.list.length, 'cardBox');
 		arr = this.list.splice(0, cardNum);
 	}
-	if (arr) {
-		arr.sort(function(a,b){
-   			return a.replace(/\d+_/,'').localeCompare(b.replace(/\d+_/,''));
-		});
-	}
+	// if (arr) {
+	// 	arr.sort(function(a,b){
+ //   			return a.replace(/\d+_/,'').localeCompare(b.replace(/\d+_/,''));
+	// 	});
+	// }
 	return arr;
 };
 module.exports = CardBox;

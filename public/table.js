@@ -138,6 +138,7 @@ Table.prototype.dealCardsToPlayers = function() {
 		self.table_hide_view.removeChild(val.card_view);
 		self.player_cards_list.push(card);
 	});
+	this.playerSortCards();
 }
 Table.prototype.bindEvent = function() {
 	var self = this;
@@ -257,8 +258,26 @@ Table.prototype.subAddCardList = function(card_list) {
 };
 Table.prototype.playerSortCards = function() {
 	console.log(this.player_cards_list, "length:", this.player_cards_list.length);
+	var type_obj = {};
 	for (var i = 0; i < this.player_cards_list.length; i++) {
-		this.player_cards_list[i].card_view.x = i * this.row_card_width;
+		var itemType = this.player_cards_list[i].txt.split('_')[1];
+		if(type_obj[itemType]==undefined){
+			type_obj[itemType] = new Array();
+		}
+		type_obj[itemType].push(this.player_cards_list[i]);
+		// this.player_cards_list[i].card_view.x = i * this.row_card_width;
+	}
+	var total_arr = [];
+	for(var p in type_obj){
+		var arr = type_obj[p];
+		arr.sort(function(a,b){
+			return a.txt.localeCompare(b.txt);
+		});
+		total_arr = total_arr.concat(arr);
+	}
+	this.player_cards_list = total_arr;
+	for(var j=0;j<this.player_cards_list.length;j++){
+		this.player_cards_list[j].card_view.x = j * this.row_card_width;
 	}
 };
 Table.prototype.peng = function(hand_list, table_card) {
@@ -271,6 +290,7 @@ Table.prototype.peng = function(hand_list, table_card) {
 };
 Table.prototype.gang = function (hand_list,table_card){
 	var card_list = hand_list;
+	console.log('hand_list',hand_list,table_card);
 	if(table_card){
 		card_list.push(table_card);
 		this.tableRemoveCard(table_card);
