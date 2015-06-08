@@ -133,10 +133,12 @@ var main = {
 				Global.pengActionOnly = true;
 			}
 		});
-		socket.on('throw success', function(data) {
+		socket.on('throw', function(data) {
 			console.log('throw success', data);
-			if (data && data.card_name) {
+			if(data.result ==0){
 				Global.table.playerThrowCard(data.card_name);
+			}else{
+				console.log('throw error:',data.msg);
 			}
 		});
 		socket.on('table add card', function(data) {

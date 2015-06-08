@@ -62,22 +62,26 @@ Table.prototype.initControls = function() {
 			socket.emit('chi');
 		}
 	});
-	this.initControl_items('peng', 38, function(ev) {
+	this.initControl_items('peng', 1, function(ev) {
 		console.log('peng');
 		socket.emit('peng');
 	});
-	this.initControl_items('gang', 76, function(ev) {
+	this.initControl_items('gang', 2, function(ev) {
 		console.log('gang');
 		socket.emit('gang');
 	});
-	this.initControl_items('hu', 114, function(ev) {
+	this.initControl_items('hu', 3, function(ev) {
 		console.log('hu');
-	})
+	});
+	this.initControl_items('guo',4,function(ev){
+		console.log('guo');
+		socket.emit('guo');
+	});
 }
-Table.prototype.initControl_items = function(txt, pos_x, callback) {
+Table.prototype.initControl_items = function(txt, index, callback) {
 	var item = new createjs.Container();
 	this.control_view.addChild(item);
-	item.x = pos_x;
+	item.x = 38*index;
 	var control_bg = new createjs.Shape();
 	control_bg.graphics.beginStroke("#000").drawRect(0, 0, 36, 36);
 	control_bg.graphics.beginFill("#fff").drawRect(1, 1, 35, 35);

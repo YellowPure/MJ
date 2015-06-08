@@ -172,7 +172,11 @@ io.on('connection', function (socket) {
 	socket.on('gang', function(){
 		console.log('gang');
 		rooms[socket.roomId].gameMain.gang(socket.username);
-	})
+	});
+	socket.on('guo', function(){
+		console.log('guo');
+		rooms[socket.roomId].gameMain.guo(socket.username);
+	});
 //	socket.on('end animated',function(data){
 //		var count=0;
 //		if(data&&data.name){

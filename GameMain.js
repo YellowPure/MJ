@@ -13,6 +13,8 @@ function GameMain(option) {
 	this.curPlayerIndex = 0;
 	//上一个操作的玩家索引
 	this.lastPlayerIndex = null;
+	this.insert_list = [];
+	this.record_player = null;
 }
 GameMain.prototype.startGame = function() {
 	var self = this;
@@ -50,12 +52,22 @@ GameMain.prototype.getThrowCard = function(cardName, socket) {
 	console.log('_player:', this.curPlayerIndex);
 	if (_player.username != this.playerList[this.curPlayerIndex].username) {
 		console.log('error : not cur action player!');
+		_player.socket.emit('throw',{
+			result:-1,
+			msg:'error : not cur action player!'
+		});
+		return;
+	}
+	if(_player.onlyPeng == true){
+		console.log('error: only peng');
+		_player.socket.emit('throw',{result:-1,msg:"error: only peng"});
 		return;
 	}
 	if (_index != -1) {
 		_player.cardList.splice(_index, 1);
 	}
-	socket.emit('throw success', {
+	socket.emit('throw', {
+		result:0,
 		card_name: cardName
 	});
 	socket.broadcast.to(this.roomId).emit('table add card', {
@@ -64,18 +76,35 @@ GameMain.prototype.getThrowCard = function(cardName, socket) {
 	this.table.addCard(cardName);
 	var check_result = this.checkAllPlayerAblePeng();
 	//有玩家可以抢碰牌桌中的牌
-	if(check_result.length>0){
-		this.waitPlayerAction(check_result);
+	if(this.insert_list.length>0){
+		this.record_player = _player;
+		this.waitPlayerAction();
 	}else{
 		this.turnNextPlayer(_player.username);
 	}
-	
 };
-GameMain.prototype.waitPlayerAction = function (playerInfoArr){
-	if(playerInfoArr.length>0){
-		this.curPlayerIndex = playerInfoArr[0].index;
-		playerInfoArr[0].socket.emit('player turn',{index:this.curPlayerIndex,type:'peng'});
-		playerInfoArr[0].socket.broadcast.emit('wait player',{username:playerInfoArr[0].username});
+GameMain.prototype.waitPlayerAction = function (){
+	if(this.insert_list.length>0){
+		this.curPlayerIndex = this.insert_list[0].index;
+		this.insert_list[0].socket.emit('player turn',{index:this.curPlayerIndex});
+		this.GAME_STATE = "GAME_WAIT";
+		this.insert_list[0].socket.broadcast.emit('wait player',{username:this.insert_list[0].username});
+	}
+};
+GameMain.prototype.guo = function(username){
+	console.log('guo',username,this.insert_list,this.record_player);
+	this.insert_list.forEach(function(ele,index){
+		if(ele.username == username){
+			this.insert_list.splice(index,1);
+		}
+	},this);
+	var check_result = this.checkAllPlayerAblePeng();
+	//有玩家可以抢碰牌桌中的牌
+	if(this.insert_list.length>0){
+		this.waitPlayerAction();
+	}else{
+		this.curPlayerIndex = this.playerList.indexOf(this.record_player);
+		this.turnNextPlayer(this.record_player.username);
 	}
 };
 GameMain.prototype.getPlayerByName = function(username) {
@@ -151,7 +180,9 @@ GameMain.prototype.chi = function(name) {
 
 };
 GameMain.prototype.peng = function(name) {
-	var result = this.checkPeng(name);
+	var _player = this.getPlayerByName(name);
+	var result = this.checkPeng(_player);
+	
 	if (result) {
 		_player.socket.emit('peng', {
 			result: 0,
@@ -165,9 +196,8 @@ GameMain.prototype.peng = function(name) {
 		});
 	}
 };
-GameMain.prototype.checkPeng = function(name) {
+GameMain.prototype.checkPeng = function(_player) {
 	var result = null;
-	var _player = this.getPlayerByName(name);
 	var card_name = this.table.lastCard();
 	if (card_name) {
 		var _result = this.machine.peng(_player.cardList, card_name);
@@ -218,14 +248,16 @@ GameMain.prototype.gang = function(name) {
 	}
 };
 GameMain.prototype.checkAllPlayerAblePeng = function() {
-	var results = [];
+	// var results = [];
 	for (var i = 0; i < this.playerList.length; i++) {
-		var _result = this.checkPeng(this.playerList[i].username);
+		var _result = this.checkPeng(this.playerList[i]);
 		if (_result) {
-			results.push({result:_result,player:this.playerList[i],index:i});
+			this.playerList[i].onlyPeng = true;
+			console.log('_result:',_result,i,this.playerList[i]);
+			this.insert_list.push({result:_result,player:this.playerList[i],index:i});
 		}
 	}
-	return results;
+	// return results;
 };
 GameMain.prototype.checkTurn = function() {
 	var pass = true;
