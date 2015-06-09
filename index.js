@@ -135,7 +135,7 @@ io.on('connection', function (socket) {
 //		}
 		
 	});
-	socket.on('broadcast start game', function (data) {
+	socket.on('broadcast start game', function(data) {
 		console.log('broadcast start game', data.username);
 		GameMain.countDown(function () {
 			GameMain.startGame(socket);

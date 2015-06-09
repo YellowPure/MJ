@@ -58,7 +58,7 @@ Table.prototype.initControls = function() {
 
 	this.initControl_items('chi', 0, function(ev) {
 		console.log('chi!');
-		if(Global.pengActionOnly!=true){
+		if (Global.pengActionOnly != true) {
 			socket.emit('chi');
 		}
 	});
@@ -73,7 +73,7 @@ Table.prototype.initControls = function() {
 	this.initControl_items('hu', 3, function(ev) {
 		console.log('hu');
 	});
-	this.initControl_items('guo',4,function(ev){
+	this.initControl_items('guo', 4, function(ev) {
 		console.log('guo');
 		socket.emit('guo');
 	});
@@ -81,7 +81,7 @@ Table.prototype.initControls = function() {
 Table.prototype.initControl_items = function(txt, index, callback) {
 	var item = new createjs.Container();
 	this.control_view.addChild(item);
-	item.x = 38*index;
+	item.x = 38 * index;
 	var control_bg = new createjs.Shape();
 	control_bg.graphics.beginStroke("#000").drawRect(0, 0, 36, 36);
 	control_bg.graphics.beginFill("#fff").drawRect(1, 1, 35, 35);
@@ -267,22 +267,22 @@ Table.prototype.playerSortCards = function() {
 	var type_obj = {};
 	for (var i = 0; i < this.player_cards_list.length; i++) {
 		var itemType = this.player_cards_list[i].txt.split('_')[1];
-		if(type_obj[itemType]==undefined){
+		if (type_obj[itemType] == undefined) {
 			type_obj[itemType] = new Array();
 		}
 		type_obj[itemType].push(this.player_cards_list[i]);
 		// this.player_cards_list[i].card_view.x = i * this.row_card_width;
 	}
 	var total_arr = [];
-	for(var p in type_obj){
+	for (var p in type_obj) {
 		var arr = type_obj[p];
-		arr.sort(function(a,b){
+		arr.sort(function(a, b) {
 			return a.txt.localeCompare(b.txt);
 		});
 		total_arr = total_arr.concat(arr);
 	}
 	this.player_cards_list = total_arr;
-	for(var j=0;j<this.player_cards_list.length;j++){
+	for (var j = 0; j < this.player_cards_list.length; j++) {
 		this.player_cards_list[j].card_view.x = j * this.row_card_width;
 	}
 };
@@ -294,10 +294,10 @@ Table.prototype.peng = function(hand_list, table_card) {
 	this.playerRemoveCards(hand_list);
 	this.subAddCardList(card_list);
 };
-Table.prototype.gang = function (hand_list,table_card){
+Table.prototype.gang = function(hand_list, table_card) {
 	var card_list = hand_list;
-	console.log('hand_list',hand_list,table_card);
-	if(table_card){
+	console.log('hand_list', hand_list, table_card);
+	if (table_card) {
 		card_list.push(table_card);
 		this.tableRemoveCard(table_card);
 	}

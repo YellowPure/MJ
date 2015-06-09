@@ -122,7 +122,7 @@ var Machine = {
 		var match_arr = [match_card, card_one, card_two];
 		var type_arr = this.getTypeByMatchArr(match_arr);
 		var num_arr = this.getNumsByMatchArr(match_arr);
-
+		console.log('card_one,card_two,match_card',card_one,card_two,match_card);
 		var same_type = this.checkArrIsEqual(type_arr);
 		var same_num = this.checkArrIsEqual(num_arr);
 		if(same_num&&same_type){

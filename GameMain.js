@@ -52,60 +52,79 @@ GameMain.prototype.getThrowCard = function(cardName, socket) {
 	console.log('_player:', this.curPlayerIndex);
 	if (_player.username != this.playerList[this.curPlayerIndex].username) {
 		console.log('error : not cur action player!');
-		_player.socket.emit('throw',{
-			result:-1,
-			msg:'error : not cur action player!'
+		_player.socket.emit('throw', {
+			result: -1,
+			msg: 'error : not cur action player!'
 		});
 		return;
 	}
-	if(_player.onlyPeng == true){
-		console.log('error: only peng');
-		_player.socket.emit('throw',{result:-1,msg:"error: only peng"});
-		return;
-	}
-	if (_index != -1) {
+	// if (_player.onlyPeng == true) {
+	// 	console.log('error: only peng');
+	// 	_player.socket.emit('throw', {
+	// 		result: -1,
+	// 		msg: "error: only peng"
+	// 	});
+	// 	return;
+	// }
+	if (_index != -1){
 		_player.cardList.splice(_index, 1);
 	}
 	socket.emit('throw', {
-		result:0,
+		result: 0,
 		card_name: cardName
 	});
 	socket.broadcast.to(this.roomId).emit('table add card', {
 		card_name: cardName
 	});
 	this.table.addCard(cardName);
-	var check_result = this.checkAllPlayerAblePeng();
-	//有玩家可以抢碰牌桌中的牌
+
+	this.turnNext();
+	this.checkNotCurPlayerAblePeng();
+	//有玩家可以抢碰牌桌中的牌 并且不是下一位玩家
 	if(this.insert_list.length>0){
-		this.record_player = _player;
+			this.record_player = _player;
 		this.waitPlayerAction();
 	}else{
 		this.turnNextPlayer(_player.username);
 	}
 };
-GameMain.prototype.waitPlayerAction = function (){
+GameMain.prototype.turnNext = function(){
+	this.checkNotCurPlayerAblePeng();
 	if(this.insert_list.length>0){
-		this.curPlayerIndex = this.insert_list[0].index;
-		this.insert_list[0].socket.emit('player turn',{index:this.curPlayerIndex});
-		this.GAME_STATE = "GAME_WAIT";
-		this.insert_list[0].socket.broadcast.emit('wait player',{username:this.insert_list[0].username});
+		this.record_player = _player;
+		this.waitPlayerAction();
+		return;
 	}
 };
-GameMain.prototype.guo = function(username){
-	console.log('guo',username,this.insert_list,this.record_player);
-	this.insert_list.forEach(function(ele,index){
-		if(ele.username == username){
-			this.insert_list.splice(index,1);
-		}
-	},this);
-	var check_result = this.checkAllPlayerAblePeng();
-	//有玩家可以抢碰牌桌中的牌
-	if(this.insert_list.length>0){
-		this.waitPlayerAction();
-	}else{
-		this.curPlayerIndex = this.playerList.indexOf(this.record_player);
-		this.turnNextPlayer(this.record_player.username);
+GameMain.prototype.waitPlayerAction = function() {
+	if (this.insert_list.length > 0) {
+		this.curPlayerIndex = this.insert_list[0].index;
+		this.insert_list[0].socket.emit('player turn', {
+			index: this.curPlayerIndex
+		});
+		this.GAME_STATE = "GAME_WAIT";
+		this.insert_list[0].socket.broadcast.emit('wait player', {
+			username: this.insert_list[0].username
+		});
 	}
+};
+GameMain.prototype.guo = function(username) {
+	console.log('guo', username, this.insert_list, this.record_player);
+	this.insert_list.forEach(function(ele, index) {
+		if (ele.username == username) {
+			this.GAME_STATE = "GAME_START";
+			this.insert_list.splice(index, 1);
+		}
+	}, this);
+	this.turnNext();
+	// this.checkAllPlayerAblePeng();
+	// //有玩家可以抢碰牌桌中的牌
+	// if (this.insert_list.length > 0) {
+	// 	this.waitPlayerAction();
+	// } else {
+	// 	this.curPlayerIndex = this.playerList.indexOf(this.record_player);
+	// 	this.turnNextPlayer(this.record_player.username);
+	// }
 };
 GameMain.prototype.getPlayerByName = function(username) {
 	var result = null;
@@ -128,12 +147,38 @@ GameMain.prototype.turnNextPlayer = function(username) {
 	}
 	this.lastPlayerIndex = this.curPlayerIndex;
 	this.curPlayerIndex = nextIndex;
-	console.log('player turn', {index:nextIndex,type:'normal'});
+	console.log('player turn', {
+		index: nextIndex,
+		type: 'normal'
+	});
 	var _name = this.playerList[nextIndex].username;
 	Global.io.to(this.roomId).emit('player turn', {
 		name: _name
 	});
-	this.dealCardToPlayer(_name);
+	var checkAbleDealCard = this.checkAbleDealCard();
+	if(checkAbleDealCard){
+		this.dealCardToPlayer(_name);
+	}else{
+		this.waitPlayerAction();
+	}
+};
+GameMain.prototype.checkAbleDealCard = function() {
+	var result = true;
+	// this.checkNotCurOrNextPlayerAblePeng();
+	//有玩家可以抢碰牌桌中的牌 并且不是下一位玩家
+	if (this.insert_list.length > 0) {
+		this.record_player = _player;
+		this.waitPlayerAction();
+	}
+	//check下一位玩家是否可以碰、吃、胡，如果可以就不发牌
+	var chi_result = this.machine.chi(this.playerList[this.curPlayerIndex].cardList,this.table.lastCard());
+	if(chi_result){
+		result=false;
+	}
+	var peng_result = this.machine.peng(this.playerList[this.curPlayerIndex].card_list,this.table.lastCard());
+	if(peng_result){
+		result = false;
+	}
 };
 GameMain.prototype.dealCardToPlayer = function(username) {
 	var _player = this.getPlayerByName(username);
@@ -182,8 +227,9 @@ GameMain.prototype.chi = function(name) {
 GameMain.prototype.peng = function(name) {
 	var _player = this.getPlayerByName(name);
 	var result = this.checkPeng(_player);
-	
+	console.log('result_peng:', result);
 	if (result) {
+		_player.onlyPeng = false;
 		_player.socket.emit('peng', {
 			result: 0,
 			hand_list: [result[0], result[1]],
@@ -247,15 +293,28 @@ GameMain.prototype.gang = function(name) {
 		});
 	}
 };
-GameMain.prototype.checkAllPlayerAblePeng = function() {
+GameMain.prototype.checkNotCurPlayerAblePeng = function() {
 	// var results = [];
-	for (var i = 0; i < this.playerList.length; i++) {
-		var _result = this.checkPeng(this.playerList[i]);
-		if (_result) {
-			this.playerList[i].onlyPeng = true;
-			console.log('_result:',_result,i,this.playerList[i]);
-			this.insert_list.push({result:_result,player:this.playerList[i],index:i});
+	var checkList = [];
+	console.log('checkNotCurPlayerAblePeng::', this.lastPlayerIndex, this.curPlayerIndex);
+	var tempList = this.playerList;
+	var a_arr = tempList.slice(this.curPlayerIndex,this.playerList.length);
+	var b_arr = tempList.slice(0, this.curPlayerIndex);
+	checkList = a_arr.concat(b_arr);
+
+	for (var i = 0; i < checkList.length; i++) {
+		if (i != this.lastPlayerIndex && i != this.curPlayerIndex) {
+			var _result = this.checkPeng(checkList[i]);
+			if (_result) {
+				checkList[i].onlyPeng = true;
+				console.log('_result:', _result, checkList[i]);
+				this.insert_list.push({
+					result: _result,
+					player: checkList[i]
+				});
+			}
 		}
+
 	}
 	// return results;
 };
