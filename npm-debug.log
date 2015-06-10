@@ -1,207 +1,230 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', '-g', 'express@4.10.2' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', '-g', 'node-inspector' ]
 2 info using npm@2.7.4
 3 info using node@v0.12.2
-4 silly cache add args [ 'express@4.10.2', null ]
-5 verbose cache add spec express@4.10.2
-6 silly cache add parsed spec { raw: 'express@4.10.2',
+4 silly cache add args [ 'node-inspector', null ]
+5 verbose cache add spec node-inspector
+6 silly cache add parsed spec { raw: 'node-inspector',
 6 silly cache add   scope: null,
-6 silly cache add   name: 'express',
-6 silly cache add   rawSpec: '4.10.2',
-6 silly cache add   spec: '4.10.2',
-6 silly cache add   type: 'version' }
-7 verbose addNamed express@4.10.2
-8 silly addNamed semver.valid 4.10.2
-9 silly addNamed semver.validRange 4.10.2
-10 silly mapToRegistry name express
-11 silly mapToRegistry using default registry
-12 silly mapToRegistry registry https://registry.npmjs.org/
-13 silly mapToRegistry uri https://registry.npmjs.org/express
-14 verbose addNameVersion registry:https://registry.npmjs.org/express not in flight; fetching
-15 verbose request uri https://registry.npmjs.org/express
-16 verbose request no auth needed
-17 info attempt registry request try #1 at 23:55:00
-18 verbose request id ba38ef2d6e0e0e2b
-19 http request GET https://registry.npmjs.org/express
-20 http 200 https://registry.npmjs.org/express
-21 silly get cb [ 200,
-21 silly get   { date: 'Wed, 22 Apr 2015 15:55:01 GMT',
-21 silly get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
-21 silly get     etag: '"CD0RNE5TLG2ZA8P8Y9NW8G03I"',
-21 silly get     'content-type': 'application/json',
-21 silly get     'cache-control': 'max-age=60',
-21 silly get     'content-length': '492556',
-21 silly get     'accept-ranges': 'bytes',
-21 silly get     via: '1.1 varnish',
-21 silly get     age: '34',
-21 silly get     'x-served-by': 'cache-nrt6131-NRT',
-21 silly get     'x-cache': 'HIT',
-21 silly get     'x-cache-hits': '2',
-21 silly get     'x-timer': 'S1429718101.224498,VS0,VE0',
-21 silly get     vary: 'Accept',
-21 silly get     'keep-alive': 'timeout=10, max=50',
-21 silly get     connection: 'Keep-Alive' } ]
-22 verbose get saving express to /Users/huangliang01/.npm/registry.npmjs.org/express/.cache.json
-23 verbose getCacheStat cache creation not in flight; initializing
-24 silly mapToRegistry name express
-25 silly mapToRegistry using default registry
-26 silly mapToRegistry registry https://registry.npmjs.org/
-27 silly mapToRegistry uri https://registry.npmjs.org/express
-28 verbose addRemoteTarball https://registry.npmjs.org/express/-/express-4.10.2.tgz not in flight; adding
-29 verbose addRemoteTarball [ 'https://registry.npmjs.org/express/-/express-4.10.2.tgz',
-29 verbose addRemoteTarball   'df06dde94d968932829d440a2004c5efe64495b0' ]
-30 info retry fetch attempt 1 at 23:55:05
-31 info attempt registry request try #1 at 23:55:05
-32 http fetch GET https://registry.npmjs.org/express/-/express-4.10.2.tgz
-33 http fetch 200 https://registry.npmjs.org/express/-/express-4.10.2.tgz
-34 silly fetchAndShaCheck shasum df06dde94d968932829d440a2004c5efe64495b0
-35 verbose addTmpTarball /var/folders/13/b1hvx3nx0yxc12xt52s2dhbr0000gn/T/npm-3636-cddd4717/registry.npmjs.org/express/-/express-4.10.2.tgz not in flight; adding
-36 verbose addTmpTarball already have metadata; skipping unpack for express@4.10.2
-37 silly cache afterAdd express@4.10.2
-38 verbose afterAdd /Users/huangliang01/.npm/express/4.10.2/package/package.json not in flight; writing
-39 verbose afterAdd /Users/huangliang01/.npm/express/4.10.2/package/package.json written
-40 silly install resolved [ { name: 'express',
-40 silly install resolved     description: 'Fast, unopinionated, minimalist web framework',
-40 silly install resolved     version: '4.10.2',
-40 silly install resolved     author: { name: 'TJ Holowaychuk', email: 'tj@vision-media.ca' },
-40 silly install resolved     contributors:
-40 silly install resolved      [ [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object] ],
-40 silly install resolved     license: 'MIT',
-40 silly install resolved     repository: { type: 'git', url: 'https://github.com/strongloop/express' },
-40 silly install resolved     homepage: 'http://expressjs.com/',
-40 silly install resolved     keywords:
-40 silly install resolved      [ 'express',
-40 silly install resolved        'framework',
-40 silly install resolved        'sinatra',
-40 silly install resolved        'web',
-40 silly install resolved        'rest',
-40 silly install resolved        'restful',
-40 silly install resolved        'router',
-40 silly install resolved        'app',
-40 silly install resolved        'api' ],
-40 silly install resolved     dependencies:
-40 silly install resolved      { accepts: '~1.1.3',
-40 silly install resolved        'content-disposition': '0.5.0',
-40 silly install resolved        'cookie-signature': '1.0.5',
-40 silly install resolved        debug: '~2.1.0',
-40 silly install resolved        depd: '~1.0.0',
-40 silly install resolved        'escape-html': '1.0.1',
-40 silly install resolved        etag: '~1.5.0',
-40 silly install resolved        finalhandler: '0.3.2',
-40 silly install resolved        fresh: '0.2.4',
-40 silly install resolved        'media-typer': '0.3.0',
-40 silly install resolved        methods: '1.1.0',
-40 silly install resolved        'on-finished': '~2.1.1',
-40 silly install resolved        parseurl: '~1.3.0',
-40 silly install resolved        'path-to-regexp': '0.1.3',
-40 silly install resolved        'proxy-addr': '~1.0.3',
-40 silly install resolved        qs: '2.3.2',
-40 silly install resolved        'range-parser': '~1.0.2',
-40 silly install resolved        send: '0.10.1',
-40 silly install resolved        'serve-static': '~1.7.1',
-40 silly install resolved        'type-is': '~1.5.3',
-40 silly install resolved        vary: '~1.0.0',
-40 silly install resolved        cookie: '0.1.2',
-40 silly install resolved        'merge-descriptors': '0.0.2',
-40 silly install resolved        'utils-merge': '1.0.0' },
-40 silly install resolved     devDependencies:
-40 silly install resolved      { after: '0.8.1',
-40 silly install resolved        istanbul: '0.3.2',
-40 silly install resolved        mocha: '~2.0.0',
-40 silly install resolved        should: '~4.2.1',
-40 silly install resolved        supertest: '~0.14.0',
-40 silly install resolved        ejs: '~1.0.0',
-40 silly install resolved        marked: '0.3.2',
-40 silly install resolved        hjs: '~0.0.6',
-40 silly install resolved        'body-parser': '~1.9.1',
-40 silly install resolved        'connect-redis': '~2.1.0',
-40 silly install resolved        'cookie-parser': '~1.3.3',
-40 silly install resolved        'express-session': '~1.9.1',
-40 silly install resolved        jade: '~1.7.0',
-40 silly install resolved        'method-override': '~2.3.0',
-40 silly install resolved        morgan: '~1.4.1',
-40 silly install resolved        multiparty: '~4.0.0',
-40 silly install resolved        vhost: '~3.0.0' },
-40 silly install resolved     engines: { node: '>= 0.10.0' },
-40 silly install resolved     files: [ 'LICENSE', 'History.md', 'Readme.md', 'index.js', 'lib/' ],
-40 silly install resolved     scripts:
-40 silly install resolved      { test: 'mocha --require test/support/env --reporter spec --bail --check-leaks test/ test/acceptance/',
-40 silly install resolved        'test-cov': 'istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks test/ test/acceptance/',
-40 silly install resolved        'test-tap': 'mocha --require test/support/env --reporter tap --check-leaks test/ test/acceptance/',
-40 silly install resolved        'test-travis': 'istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks test/ test/acceptance/' },
-40 silly install resolved     gitHead: 'ac56cf46063e461fbaf53c2c869a1a657e8adbe1',
-40 silly install resolved     bugs: { url: 'https://github.com/strongloop/express/issues' },
-40 silly install resolved     _id: 'express@4.10.2',
-40 silly install resolved     _shasum: 'df06dde94d968932829d440a2004c5efe64495b0',
-40 silly install resolved     _from: 'express@4.10.2',
-40 silly install resolved     _npmVersion: '1.4.21',
-40 silly install resolved     _npmUser: { name: 'dougwilson', email: 'doug@somethingdoug.com' },
-40 silly install resolved     maintainers:
-40 silly install resolved      [ [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object],
-40 silly install resolved        [Object] ],
-40 silly install resolved     dist:
-40 silly install resolved      { shasum: 'df06dde94d968932829d440a2004c5efe64495b0',
-40 silly install resolved        tarball: 'http://registry.npmjs.org/express/-/express-4.10.2.tgz' },
-40 silly install resolved     directories: {},
-40 silly install resolved     _resolved: 'https://registry.npmjs.org/express/-/express-4.10.2.tgz' } ]
-41 info install express@4.10.2 into /usr/local/lib
-42 info installOne express@4.10.2
-43 verbose installOne of express to /usr/local/lib not in flight; installing
-44 verbose lock using /Users/huangliang01/.npm/_locks/express-59b5b7164c5e2658.lock for /usr/local/lib/node_modules/express
-45 silly install write writing express 4.10.2 to /usr/local/lib/node_modules/express
-46 silly cache addNamed cb express@4.10.2
-47 verbose unbuild lib/node_modules/express
-48 silly gentlyRm /usr/local/lib/node_modules/express is being purged from base /usr/local
-49 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/express
-50 verbose tar unpack /Users/huangliang01/.npm/express/4.10.2/package.tgz
-51 verbose tar unpacking to /usr/local/lib/node_modules/express
-52 silly gentlyRm /usr/local/lib/node_modules/express is being purged
-53 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/express
-54 silly gunzTarPerm modes [ '755', '644' ]
-55 error tar.unpack untar error /Users/huangliang01/.npm/express/4.10.2/package.tgz
-56 verbose unlock done using /Users/huangliang01/.npm/_locks/express-59b5b7164c5e2658.lock for /usr/local/lib/node_modules/express
-57 verbose fstream_path /usr/local/lib/node_modules/express
-58 verbose fstream_type Directory
-59 verbose fstream_class DirWriter
-60 verbose stack Error: EACCES, mkdir '/usr/local/lib/node_modules/express'
-60 verbose stack     at Error (native)
-61 verbose fstream_stack /usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
-61 verbose fstream_stack /usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
-61 verbose fstream_stack FSReqWrap.oncomplete (fs.js:95:15)
-62 verbose cwd /Users/huangliang01/MJ
-63 error Darwin 14.3.0
-64 error argv "node" "/usr/local/bin/npm" "install" "-g" "express@4.10.2"
-65 error node v0.12.2
-66 error npm  v2.7.4
-67 error path /usr/local/lib/node_modules/express
-68 error code EACCES
-69 error errno -13
-70 error Error: EACCES, mkdir '/usr/local/lib/node_modules/express'
-70 error     at Error (native)
-70 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules/express']
-70 error   errno: -13,
-70 error   code: 'EACCES',
-70 error   path: '/usr/local/lib/node_modules/express',
-70 error   fstream_type: 'Directory',
-70 error   fstream_path: '/usr/local/lib/node_modules/express',
-70 error   fstream_class: 'DirWriter',
-70 error   fstream_stack:
-70 error    [ '/usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
-70 error      '/usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
-70 error      'FSReqWrap.oncomplete (fs.js:95:15)' ] }
-71 error Please try running this command again as root/Administrator.
-72 verbose exit [ -13, true ]
-73 verbose unbuild lib/node_modules/express
-74 silly gentlyRm /usr/local/lib/node_modules/express is being purged from base /usr/local
-75 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/express
+6 silly cache add   name: 'node-inspector',
+6 silly cache add   rawSpec: '',
+6 silly cache add   spec: '*',
+6 silly cache add   type: 'range' }
+7 verbose addNamed node-inspector@*
+8 silly addNamed semver.valid null
+9 silly addNamed semver.validRange *
+10 silly addNameRange { name: 'node-inspector', range: '*', hasData: false }
+11 silly mapToRegistry name node-inspector
+12 silly mapToRegistry using default registry
+13 silly mapToRegistry registry https://registry.npmjs.org/
+14 silly mapToRegistry uri https://registry.npmjs.org/node-inspector
+15 verbose addNameRange registry:https://registry.npmjs.org/node-inspector not in flight; fetching
+16 verbose request uri https://registry.npmjs.org/node-inspector
+17 verbose request no auth needed
+18 info attempt registry request try #1 at 23:36:59
+19 verbose request id dab5d3d8905fa4b9
+20 verbose etag "2NRSF19AKNS8CZVL2JY2BG0I4"
+21 http request GET https://registry.npmjs.org/node-inspector
+22 http 304 https://registry.npmjs.org/node-inspector
+23 silly get cb [ 304,
+23 silly get   { date: 'Wed, 10 Jun 2015 15:36:56 GMT',
+23 silly get     via: '1.1 varnish',
+23 silly get     'cache-control': 'max-age=60',
+23 silly get     etag: '"2NRSF19AKNS8CZVL2JY2BG0I4"',
+23 silly get     age: '16',
+23 silly get     connection: 'keep-alive',
+23 silly get     'x-served-by': 'cache-ams4135-AMS',
+23 silly get     'x-cache': 'HIT',
+23 silly get     'x-cache-hits': '1',
+23 silly get     'x-timer': 'S1433950616.296269,VS0,VE2',
+23 silly get     vary: 'Accept' } ]
+24 verbose etag https://registry.npmjs.org/node-inspector from cache
+25 verbose get saving node-inspector to /Users/huangliang01/.npm/registry.npmjs.org/node-inspector/.cache.json
+26 silly addNameRange number 2 { name: 'node-inspector', range: '*', hasData: true }
+27 silly addNameRange versions [ 'node-inspector',
+27 silly addNameRange   [ '0.0.1',
+27 silly addNameRange     '0.0.2',
+27 silly addNameRange     '0.0.3',
+27 silly addNameRange     '0.0.4',
+27 silly addNameRange     '0.1.0',
+27 silly addNameRange     '0.1.1',
+27 silly addNameRange     '0.1.2',
+27 silly addNameRange     '0.1.3',
+27 silly addNameRange     '0.1.4',
+27 silly addNameRange     '0.1.5',
+27 silly addNameRange     '0.1.6',
+27 silly addNameRange     '0.1.7',
+27 silly addNameRange     '0.1.8',
+27 silly addNameRange     '0.1.9',
+27 silly addNameRange     '0.1.10',
+27 silly addNameRange     '0.3.0',
+27 silly addNameRange     '0.3.1',
+27 silly addNameRange     '0.3.2',
+27 silly addNameRange     '0.3.3',
+27 silly addNameRange     '0.3.4',
+27 silly addNameRange     '0.4.0',
+27 silly addNameRange     '0.5.0',
+27 silly addNameRange     '0.6.0',
+27 silly addNameRange     '0.6.1',
+27 silly addNameRange     '0.6.2',
+27 silly addNameRange     '0.7.0-1',
+27 silly addNameRange     '0.2.0-beta1',
+27 silly addNameRange     '0.2.0-beta2',
+27 silly addNameRange     '0.2.0-beta3',
+27 silly addNameRange     '0.2.0-beta4',
+27 silly addNameRange     '0.3.0-preview1',
+27 silly addNameRange     '0.7.0-2',
+27 silly addNameRange     '0.7.0',
+27 silly addNameRange     '0.7.1',
+27 silly addNameRange     '0.7.2',
+27 silly addNameRange     '0.7.3',
+27 silly addNameRange     '0.7.4',
+27 silly addNameRange     '0.8.0',
+27 silly addNameRange     '0.8.1',
+27 silly addNameRange     '0.8.3',
+27 silly addNameRange     '0.9.0',
+27 silly addNameRange     '0.9.1',
+27 silly addNameRange     '0.9.2',
+27 silly addNameRange     '0.10.0',
+27 silly addNameRange     '0.10.1' ] ]
+28 verbose addNamed node-inspector@0.10.1
+29 silly addNamed semver.valid 0.10.1
+30 silly addNamed semver.validRange 0.10.1
+31 silly cache afterAdd node-inspector@0.10.1
+32 verbose afterAdd /Users/huangliang01/.npm/node-inspector/0.10.1/package/package.json not in flight; writing
+33 verbose afterAdd /Users/huangliang01/.npm/node-inspector/0.10.1/package/package.json written
+34 silly install resolved [ { name: 'node-inspector',
+34 silly install resolved     version: '0.10.1',
+34 silly install resolved     description: 'Web Inspector based nodeJS debugger',
+34 silly install resolved     homepage: 'http://github.com/node-inspector/node-inspector',
+34 silly install resolved     author: { name: 'Danny Coates', email: 'dannycoates@gmail.com' },
+34 silly install resolved     keywords: [ 'debug', 'debugger', 'inspector', 'profiler' ],
+34 silly install resolved     repository:
+34 silly install resolved      { type: 'git',
+34 silly install resolved        url: 'http://github.com/node-inspector/node-inspector.git' },
+34 silly install resolved     engines: { node: '>=0.8.0' },
+34 silly install resolved     bin:
+34 silly install resolved      { 'node-inspector': './bin/inspector.js',
+34 silly install resolved        'node-debug': './bin/node-debug.js' },
+34 silly install resolved     dependencies:
+34 silly install resolved      { async: '~0.9',
+34 silly install resolved        'biased-opener': '~0.2.2',
+34 silly install resolved        debug: '^2.2.0',
+34 silly install resolved        express: '^4.12.3',
+34 silly install resolved        glob: '^5.0.5',
+34 silly install resolved        rc: '^1.0.1',
+34 silly install resolved        semver: '^4.3.4',
+34 silly install resolved        'serve-favicon': '^2.1.1',
+34 silly install resolved        'strong-data-uri': '^1.0.0',
+34 silly install resolved        'v8-debug': '~0.4.2',
+34 silly install resolved        'v8-profiler': '~5.2.4',
+34 silly install resolved        which: '^1.1.1',
+34 silly install resolved        ws: '^0.7.1',
+34 silly install resolved        yargs: '^3.9.0' },
+34 silly install resolved     devDependencies:
+34 silly install resolved      { mocha: '^1.21',
+34 silly install resolved        chai: '^1.9',
+34 silly install resolved        jshint: '^2.4.4',
+34 silly install resolved        'fs-extra': '~0.8.1' },
+34 silly install resolved     preferGlobal: true,
+34 silly install resolved     scripts:
+34 silly install resolved      { pretest: 'jshint .',
+34 silly install resolved        test: 'mocha',
+34 silly install resolved        'generate-front-end': 'node --harmony tools/generate-front-end' },
+34 silly install resolved     contributors:
+34 silly install resolved      [ [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object],
+34 silly install resolved        [Object] ],
+34 silly install resolved     gitHead: 'd747efec662d6f34b3e6b56c9ba0e9cbaf2f292f',
+34 silly install resolved     bugs: { url: 'https://github.com/node-inspector/node-inspector/issues' },
+34 silly install resolved     _id: 'node-inspector@0.10.1',
+34 silly install resolved     _shasum: '16d60ad17f82e9ecd9047a206bc16accf3b426b3',
+34 silly install resolved     _from: 'node-inspector@*',
+34 silly install resolved     _npmVersion: '2.5.1',
+34 silly install resolved     _nodeVersion: '0.12.0',
+34 silly install resolved     _npmUser: { name: '3y3', email: '3y3@bk.ru' },
+34 silly install resolved     dist:
+34 silly install resolved      { shasum: '16d60ad17f82e9ecd9047a206bc16accf3b426b3',
+34 silly install resolved        tarball: 'http://registry.npmjs.org/node-inspector/-/node-inspector-0.10.1.tgz' },
+34 silly install resolved     maintainers: [ [Object], [Object], [Object], [Object], [Object] ],
+34 silly install resolved     directories: {},
+34 silly install resolved     _resolved: 'https://registry.npmjs.org/node-inspector/-/node-inspector-0.10.1.tgz',
+34 silly install resolved     readme: 'ERROR: No README data found!' } ]
+35 info install node-inspector@0.10.1 into /usr/local/lib
+36 info installOne node-inspector@0.10.1
+37 verbose installOne of node-inspector to /usr/local/lib not in flight; installing
+38 verbose lock using /Users/huangliang01/.npm/_locks/node-inspector-885d0a05b8e6718d.lock for /usr/local/lib/node_modules/node-inspector
+39 silly install write writing node-inspector 0.10.1 to /usr/local/lib/node_modules/node-inspector
+40 silly cache addNamed cb node-inspector@0.10.1
+41 verbose unbuild lib/node_modules/node-inspector
+42 silly gentlyRm /usr/local/lib/node_modules/node-inspector is being purged from base /usr/local
+43 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/node-inspector
+44 verbose tar unpack /Users/huangliang01/.npm/node-inspector/0.10.1/package.tgz
+45 verbose tar unpacking to /usr/local/lib/node_modules/node-inspector
+46 silly gentlyRm /usr/local/lib/node_modules/node-inspector is being purged
+47 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/node-inspector
+48 silly gunzTarPerm modes [ '755', '644' ]
+49 error tar.unpack untar error /Users/huangliang01/.npm/node-inspector/0.10.1/package.tgz
+50 verbose unlock done using /Users/huangliang01/.npm/_locks/node-inspector-885d0a05b8e6718d.lock for /usr/local/lib/node_modules/node-inspector
+51 verbose fstream_path /usr/local/lib/node_modules/node-inspector
+52 verbose fstream_type Directory
+53 verbose fstream_class DirWriter
+54 verbose stack Error: EACCES, mkdir '/usr/local/lib/node_modules/node-inspector'
+54 verbose stack     at Error (native)
+55 verbose fstream_stack /usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+55 verbose fstream_stack /usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+55 verbose fstream_stack FSReqWrap.oncomplete (fs.js:95:15)
+56 verbose cwd /Users/huangliang01/work/MJ
+57 error Darwin 14.3.0
+58 error argv "node" "/usr/local/bin/npm" "install" "-g" "node-inspector"
+59 error node v0.12.2
+60 error npm  v2.7.4
+61 error path /usr/local/lib/node_modules/node-inspector
+62 error code EACCES
+63 error errno -13
+64 error Error: EACCES, mkdir '/usr/local/lib/node_modules/node-inspector'
+64 error     at Error (native)
+64 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules/node-inspector']
+64 error   errno: -13,
+64 error   code: 'EACCES',
+64 error   path: '/usr/local/lib/node_modules/node-inspector',
+64 error   fstream_type: 'Directory',
+64 error   fstream_path: '/usr/local/lib/node_modules/node-inspector',
+64 error   fstream_class: 'DirWriter',
+64 error   fstream_stack:
+64 error    [ '/usr/local/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+64 error      '/usr/local/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+64 error      'FSReqWrap.oncomplete (fs.js:95:15)' ] }
+65 error Please try running this command again as root/Administrator.
+66 verbose exit [ -13, true ]
+67 verbose unbuild lib/node_modules/node-inspector
+68 silly gentlyRm /usr/local/lib/node_modules/node-inspector is being purged from base /usr/local
+69 verbose gentlyRm don't care about contents; nuking /usr/local/lib/node_modules/node-inspector

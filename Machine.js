@@ -1,5 +1,5 @@
 var Machine = {
-	checkArrIsEqual: function(array) {
+	checkArrIsEqual: function (array) {
 		var same = true;
 		for (var index = 0; index < array.length; index++) {
 			var element = array[index];
@@ -11,29 +11,29 @@ var Machine = {
 		// console.log('same',same);
 		return same;
 	},
-	getTypeByMatchArr: function(array) {
+	getTypeByMatchArr: function (array) {
 		var arr = [];
 		if (Object.prototype.toString.call(array) === "[object Array]") {
-			array.forEach(function(val) {
+			array.forEach(function (val) {
 				arr.push(val.split('_')[1]);
 			});
 		}
 		return arr;
 	},
-	getNumsByMatchArr: function(array) {
+	getNumsByMatchArr: function (array) {
 		var arr = [];
 		if (Object.prototype.toString.call(array) === "[object Array]") {
-			array.forEach(function(val) {
+			array.forEach(function (val) {
 				arr.push(val.split('_')[0]);
 			})
 		}
 		return arr;
 	},
-	chi: function(card_list, match_card) {
+	chi: function (card_list, match_card) {
 		var self = this;
-		var check_three_card = function(card_one, card_two, card_three) {
+		var check_three_card = function (card_one, card_two, card_three) {
 			var _result = null;
-			var match_arr = [card_one, card_two,card_three];
+			var match_arr = [card_one, card_two, card_three];
 			var type_arr = self.getTypeByMatchArr(match_arr);
 			var num_arr = self.getNumsByMatchArr(match_arr);
 			// console.log('match_arr',match_arr,num_arr);
@@ -65,8 +65,8 @@ var Machine = {
 		var result = null;
 		var match_type = match_card.split('_')[1];
 		var _arr = [];
-		var two_card_arr= [];
-		card_list.forEach(function(ele) {
+		var two_card_arr = [];
+		card_list.forEach(function (ele) {
 			var _type = ele.split('_')[1];
 			if (_type == match_type) {
 				_arr.push(ele);
@@ -74,29 +74,29 @@ var Machine = {
 		});
 		_arr.sort();
 		for (var i = 0; i < _arr.length; i++) {
-			var j=i+1;
-			if (j<_arr.length){
-				two_card_arr.push([_arr[i],_arr[j]]);
+			var j = i + 1;
+			if (j < _arr.length) {
+				two_card_arr.push([_arr[i], _arr[j]]);
 			}
 		}
 		// console.log(two_card_arr,match_card,'three_card_arr');
 		// 此处有一个bug待修复 只返回最后一个符合条件的结果 应该是返回所有符合条件结果的数组
 		for (var i = 0; i < two_card_arr.length; i++) {
-			var _res = check_three_card(two_card_arr[i][0],two_card_arr[i][1],match_card);
-			if(_res){
+			var _res = check_three_card(two_card_arr[i][0], two_card_arr[i][1], match_card);
+			if (_res) {
 				result = _res;
 			}
 		}
 		// console.log('check chi result',result);
 		return result;
 	},
-	peng: function(card_list , match_card) {
+	peng: function (card_list, match_card) {
 		var self = this;
 		var result = null;
 		var match_type = match_card.split('_')[1];
 		var _arr = [];
-		var two_card_arr= [];
-		card_list.forEach(function(ele) {
+		var two_card_arr = [];
+		card_list.forEach(function (ele) {
 			var _type = ele.split('_')[1];
 			if (_type == match_type) {
 				_arr.push(ele);
@@ -104,20 +104,20 @@ var Machine = {
 		});
 		_arr.sort();
 		for (var i = 0; i < _arr.length; i++) {
-			var j=i+1;
-			if (j<_arr.length){
-				two_card_arr.push([_arr[i],_arr[j]]);
+			var j = i + 1;
+			if (j < _arr.length) {
+				two_card_arr.push([_arr[i], _arr[j]]);
 			}
 		}
 		for (var i = 0; i < two_card_arr.length; i++) {
-			var _res = self.check_peng(two_card_arr[i][0],two_card_arr[i][1],match_card);
-			if(_res){
+			var _res = self.check_peng(two_card_arr[i][0], two_card_arr[i][1], match_card);
+			if (_res) {
 				result = _res;
 			}
 		}
 		return result;
 	},
-	check_peng:function(card_one,card_two,match_card){
+	check_peng: function (card_one, card_two, match_card) {
 		var result = null;
 		var match_arr = [match_card, card_one, card_two];
 		var type_arr = this.getTypeByMatchArr(match_arr);
@@ -125,31 +125,31 @@ var Machine = {
 		// console.log('card_one,card_two,match_card',card_one,card_two,match_card);
 		var same_type = this.checkArrIsEqual(type_arr);
 		var same_num = this.checkArrIsEqual(num_arr);
-		if(same_num&&same_type){
+		if (same_num && same_type) {
 			result = match_arr;
 		}
 		return result;
 	},
-	gang: function(card_list , match_card) {
-		var result =null;
+	gang: function (card_list, match_card) {
+		var result = null;
 		var type = null;
 		//先check card_list中是否满足条件
 		var result1 = this.check_player_list_gang(card_list);
 		//再check table_card最后一张
-		if(match_card){
-			var result2 = this.check_table_gang(card_list,match_card);
+		if (match_card) {
+			var result2 = this.check_table_gang(card_list, match_card);
 		}
 		//此处有bug 当玩家手中有符合条件的杠时 牌桌中也有符合的情况下只返回一种
-		if(result1){
+		if (result1) {
 			result = result1;
 			type = 1;
-		}else if(result2){
+		} else if (result2) {
 			result = result2;
 			type = 2;
 		}
-		return {result:result,type:type};
+		return { result: result, type: type };
 	},
-	check_table_gang:function(card_list,match_card){
+	check_table_gang: function (card_list, match_card) {
 		var result = null;
 		var _typeObj = {};
 		var match_type = match_card.split('_')[1];
@@ -157,73 +157,76 @@ var Machine = {
 		var player_match_arr = [];
 		for (var i = 0; i < card_list.length; i++) {
 			var ele = card_list[i];
-			var eleType =ele.split('_')[1];
+			var eleType = ele.split('_')[1];
 			var eleNum = ele.split('_')[0];
-			if(eleType == match_type && eleNum == match_num){
+			if (eleType == match_type && eleNum == match_num) {
 				player_match_arr.push(ele);
 			}
 			_typeObj[eleType].push(ele);
 		};
-		if(player_match_arr.length==4){
+		if (player_match_arr.length == 4) {
 			result = player_match_arr;
 		}
-		return result; 	
+		return result;
 	},
-	check_player_list_gang :function(card_list){
+	check_player_list_gang: function (card_list) {
 		var result = null;
 		var _typeObj = {};
 		// console.log('card_list',card_list);
 		for (var i = 0; i < card_list.length; i++) {
 			var ele = card_list[i];
-			var eleType =ele.split('_')[1];
+			var eleType = ele.split('_')[1];
 			var eleNum = ele.split('_')[0];
 			//把玩家手中牌分类 
-			if(!_typeObj[eleType]){
-				_typeObj[eleType]= [];
+			if (!_typeObj[eleType]) {
+				_typeObj[eleType] = [];
 			}
 			_typeObj[eleType].push(ele);
 		};
 		// 获取符合条件的 一类牌 中的所有可能情况数组
 		var _same_type_arr = [];
-		for (var p in _typeObj){
-			if(_typeObj[p].length>3){
+		for (var p in _typeObj) {
+			if (_typeObj[p].length > 3) {
 				var nums_arr = _typeObj[p];
 				nums_arr.sort();
-				for(var j=0;j<nums_arr.length;j++){
-					var k = j+1;
-					var l = j+2;
-					var n = j+3;
-					if(k<nums_arr.length&&l<nums_arr.length&&n<nums_arr.length){
-						_same_type_arr.push([nums_arr[j],nums_arr[k],nums_arr[l],nums_arr[n]]);
+				for (var j = 0; j < nums_arr.length; j++) {
+					var k = j + 1;
+					var l = j + 2;
+					var n = j + 3;
+					if (k < nums_arr.length && l < nums_arr.length && n < nums_arr.length) {
+						_same_type_arr.push([nums_arr[j], nums_arr[k], nums_arr[l], nums_arr[n]]);
 					}
 				}
 			}
 		}
 		// console.log('_arr',_same_type_arr);
 		// 此处有一个bug待修复 只返回最后一个符合条件的结果 应该是返回所有符合条件结果的数组
-		for(var m = 0 ;m<_same_type_arr.length;m++){
+		for (var m = 0; m < _same_type_arr.length; m++) {
 			var res = this.check_gang(_same_type_arr[m]);
 			// console.log('res',res);
-			if(res){
+			if (res) {
 				result = res;
 			}
 		}
-		
+
 		return result;
 	},
-	check_gang: function(arr) {
-		var result =null;
+	check_gang: function (arr) {
+		var result = null;
 		var same_num = this.checkArrIsEqual(arr);
 
-		if(same_num){
+		if (same_num) {
 			result = arr;
 		}
 		return result;
 	},
-	hu: function() {
-
+	hu: function (card_list) {
+		var result = null;
+		var check_duizi = this.check_duizi(card_list);
+		
+		return result;
 	},
-	check_hu: function() {
+	check_hu: function () {
 		var wan_arr = this.getTypesByList('wan');
 		var feng_arr = this.getTypesByList('f');
 		var o_arr = this.getTypesByList('o');
@@ -232,9 +235,9 @@ var Machine = {
 
 		var wan_info = this.getInfoByList(wan_arr);
 	},
-	getTypesArrByList: function(type) {
+	getTypesArrByList: function (type) {
 		var arr = [];
-		this.card_list.forEach(function(val, index) {
+		this.card_list.forEach(function (val, index) {
 			var tp = val.split('_')[1];
 			if (tp == type) {
 				arr.push(val);
@@ -242,7 +245,7 @@ var Machine = {
 		});
 		return arr;
 	},
-	getInfoByList: function(list) {
+	getInfoByList: function (list) {
 		var obj = {};
 		if (list.length) {
 			obj['duizi'] = this.check_duizi(list);
@@ -254,7 +257,7 @@ var Machine = {
 		}
 		return obj;
 	},
-	check_duizi: function(array) {
+	check_duizi: function (array) {
 		var dui_arr = [];
 
 		if (array.length >= 2) {
@@ -271,7 +274,7 @@ var Machine = {
 
 		return dui_arr;
 	},
-	check_juzi: function(array) {
+	check_juzi: function (array) {
 		var juzi_arr = [];
 		if (array.length >= 3) {
 			array.sort();
@@ -288,12 +291,12 @@ var Machine = {
 
 		return juzi_arr;
 	},
-	check_shunzi: function(array) {
+	check_shunzi: function (array) {
 		var shunzi_arr = [];
 		var nums_arr = [];
 		if (array.length >= 3) {
 			array.sort();
-			array.forEach(function(val, index) {
+			array.forEach(function (val, index) {
 				nums_arr.push(val.split('_')[0]);
 			});
 			for (var index = 0; index < nums_arr.length; index++) {
