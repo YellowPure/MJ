@@ -148,14 +148,11 @@ var main = {
 			}
 		});
 		socket.on('chi',function(data){
-			console.log('chi',data);
+			console.log('chi',data.hand_list,data.table_card);
 			if(data.result !=-1){
 				Global.table.chi(data.hand_list,data.table_card);
 			}else{
 				console.log('chi error',data.msg);
-			}
-			if(data&&data.hand_list&&data.table_card){
-				
 			}
 		});
 		socket.on('peng',function(data){
@@ -177,6 +174,9 @@ var main = {
 			}else{
 				console.log('gang error',data.msg);
 			}
+		});
+		socket.on('table remove card',function(data){
+			Global.table.tableRemoveCard(data.table_card);
 		});
 	},
 	updatePlayerShow: function(list) {

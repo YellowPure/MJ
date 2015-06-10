@@ -9,7 +9,6 @@ Global.io = io;
 //console.log(Global,'Global');
 server.listen(port, function () {
 	console.log('listening on %d', port);
-	debugger;
 })
 app.use(express.static(__dirname + '/public'));
 var rooms= {};
@@ -74,32 +73,6 @@ io.on('connection', function (socket) {
 		}
 	});
 		
-//		if (usernames[username] == undefined) {
-//			socket.username = username;
-//
-//			usernames[username] = username;
-//			addUsers = true;
-//			++numUsers;
-//			socket.join(curRoomId);
-//			
-//			socket.roomId = curRoomId;
-//			var count = MJList.getCount();
-//			if (count != socket.roomId) {
-//				MJList.init(curRoomId);
-//				console.log('MJlist init!!', socket.roomId);
-//				MJList.setCount(socket.roomId);
-//			}
-//			count = GameMain.getCount();
-//			console.log('gamemain getcount', count);
-//			if (count != socket.roomId) {
-//				GameMain.init(curRoomId, socket.id);
-//			}
-			//			gameMain = Object.create(new GameMain(curRoomId, socket.id));
-			
-//		}
-	
-
-	// socket.broadcast.emit('connection','connection 1');
 	socket.on('disconnect', function () {
 		console.log('use disconnect');
 		
@@ -129,25 +102,13 @@ io.on('connection', function (socket) {
 		}else{
 			io.to(data.roomId).emit('error',{msg:'ready error'});
 		}
-//		GameMain.setPlayerReady(data.username);
-//		if (GameMain.checkToStartGame() == true) {
-//			io.to(data.roomId).emit('broadcast start game', { roomId: data.roomId });
-//		}
 		
 	});
 	socket.on('broadcast start game', function(data) {
 		console.log('broadcast start game', data.username);
 		GameMain.countDown(function () {
 			GameMain.startGame(socket);
-//			turnFirstPlayer(Global.roomPlayers[socket.roomId], 0, socket);
 		}, socket);
-	});
-	socket.on('throw', function (data) {
-		console.log('throw!');
-		if (data.card_name) {
-			rooms[socket.roomId].gameMain.getThrowCard(data.card_name,socket);
-//			GameMain.throwOneCard(data.card_name,data.socketId,data.username);
-		}
 	});
 	socket.on('not ready', function (data) {
 		console.log("I'm not ready!");
@@ -158,8 +119,12 @@ io.on('connection', function (socket) {
 		}else{
 			io.to(data.roomId).emit('error',{msg:'not ready error'});
 		}
-//		GameMain.setPlayerNotReady(data.username);
-		
+	});
+	socket.on('throw', function (data) {
+		console.log('throw!');
+		if (data.card_name) {
+			rooms[socket.roomId].gameMain.getThrowCard(data.card_name,socket);
+		}
 	});
 	socket.on('chi', function () {
 		console.log("chi card");
@@ -177,12 +142,6 @@ io.on('connection', function (socket) {
 		console.log('guo');
 		rooms[socket.roomId].gameMain.guo(socket.username);
 	});
-//	socket.on('end animated',function(data){
-//		var count=0;
-//		if(data&&data.name){
-//			GameMain.endAnimated(data.name);
-//		}
-//	});
 });
 
 function getIndexById(id) {
@@ -201,10 +160,6 @@ function getIndexById(id) {
 	return -1;
 }
 
-// function turnFirstPlayer(player_list, index, target) {
-// 	console.log(index, "first player turn on");
-// 	target.emit('player turn', { name: player_list[index].username });
-// }
 
 
 function addPlayersToRoom(curRoomId, username) {

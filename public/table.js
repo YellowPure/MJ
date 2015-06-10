@@ -214,7 +214,7 @@ Table.prototype.throwListAddCard = function(card_name) {
 	this.throw_card_count++;
 }
 Table.prototype.chi = function(hand_list, table_card) {
-	var _card_list = hand_list;
+	var _card_list = hand_list.concat();
 	_card_list.push(table_card);
 	_card_list.sort();
 	this.tableRemoveCard(table_card);
@@ -234,15 +234,19 @@ Table.prototype.tableRemoveCard = function(card_name) {
 	}
 };
 Table.prototype.playerRemoveCards = function(hand_list) {
-	console.log('playerRemoveCards');
+	console.log('playerRemoveCards',hand_list);
 	var _arr = this.player_cards_list;
-	for (var i = 0; i < _arr.length; i++) {
-		var element = _arr[i];
-		for (var j = 0; j < hand_list.length; j++) {
-			if (element.txt == hand_list[j]) {
-				this.table_player_view.removeChild(element.card_view);
-				this.player_cards_list.splice(i, 1);
-				break;
+
+	for (var i = 0; i < hand_list.length; i++) {
+		var element = hand_list[i];
+		console.log('element',element);
+		for (var j = 0; j < _arr.length; j++) {
+			// console.log('_arr[j].txt',_arr[j].txt);
+			if (element == _arr[j].txt) {
+				this.table_player_view.removeChild(_arr[j].card_view);
+				this.player_cards_list.splice(j, 1);
+				// console.log('remove card_name:',element);
+				// continue;
 			}
 		}
 	}

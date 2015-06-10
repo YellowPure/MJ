@@ -3,12 +3,12 @@ var Machine = {
 		var same = true;
 		for (var index = 0; index < array.length; index++) {
 			var element = array[index];
-			console.log('element   array[0]',element,array[0]);
+			// console.log('element1ment   array[0]',element,array[0]);
 			if (element != array[0]) {
 				same = false;
 			}
 		}
-		console.log('same',same);
+		// console.log('same',same);
 		return same;
 	},
 	getTypeByMatchArr: function(array) {
@@ -87,7 +87,7 @@ var Machine = {
 				result = _res;
 			}
 		}
-		console.log('check chi result',result);
+		// console.log('check chi result',result);
 		return result;
 	},
 	peng: function(card_list , match_card) {
@@ -122,7 +122,7 @@ var Machine = {
 		var match_arr = [match_card, card_one, card_two];
 		var type_arr = this.getTypeByMatchArr(match_arr);
 		var num_arr = this.getNumsByMatchArr(match_arr);
-		console.log('card_one,card_two,match_card',card_one,card_two,match_card);
+		// console.log('card_one,card_two,match_card',card_one,card_two,match_card);
 		var same_type = this.checkArrIsEqual(type_arr);
 		var same_num = this.checkArrIsEqual(num_arr);
 		if(same_num&&same_type){
@@ -151,6 +151,7 @@ var Machine = {
 	},
 	check_table_gang:function(card_list,match_card){
 		var result = null;
+		var _typeObj = {};
 		var match_type = match_card.split('_')[1];
 		var match_num = match_card.split('_')[0];
 		var player_match_arr = [];
@@ -171,7 +172,7 @@ var Machine = {
 	check_player_list_gang :function(card_list){
 		var result = null;
 		var _typeObj = {};
-		console.log('card_list',card_list);
+		// console.log('card_list',card_list);
 		for (var i = 0; i < card_list.length; i++) {
 			var ele = card_list[i];
 			var eleType =ele.split('_')[1];
@@ -198,11 +199,11 @@ var Machine = {
 				}
 			}
 		}
-		console.log('_arr',_same_type_arr);
+		// console.log('_arr',_same_type_arr);
 		// 此处有一个bug待修复 只返回最后一个符合条件的结果 应该是返回所有符合条件结果的数组
 		for(var m = 0 ;m<_same_type_arr.length;m++){
 			var res = this.check_gang(_same_type_arr[m]);
-			console.log('res',res);
+			// console.log('res',res);
 			if(res){
 				result = res;
 			}
