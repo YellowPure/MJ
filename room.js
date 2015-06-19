@@ -20,6 +20,12 @@ Room.prototype.delPlayer = function (username) {
 		}
 	}
 };
+Room.prototype.resetGame = function(){
+	this.playerList.forEach(function(ele){
+		ele.ready = false;
+	});
+	this.gameMain = null;
+};
 Room.prototype.setPlayerReady = function (username) {
 	var result = false;
 	this.playerList.forEach(function (ele) {

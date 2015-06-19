@@ -2,6 +2,7 @@ var CardBox = require('./CardBox');
 var Table = require("./Table");
 var Global = require("./Global");
 var Machine = require("./Machine");
+var Global = require('./Global');
 
 function GameMain(option) {
 	this.playerList = option.playerList || null;
@@ -35,6 +36,13 @@ GameMain.prototype.startGame = function () {
 	// this.dealCardsToPlayers();
 	// Global.io.to(this.roomId).emit('start game');
 };
+GameMain.prototype.endGame =function(){
+	this.GAME_STATE = "GAME_END";
+	this.table = null;
+	this.cardBox = null;
+	this.playerList = null;
+	Global.rooms[this.roomId].resetGame();
+}
 GameMain.prototype.dealCardsToPlayers = function () {
 	var self = this;
 	this.playerList.forEach(function (ele) {
@@ -90,6 +98,7 @@ GameMain.prototype.getThrowCard = function (cardName, socket) {
 GameMain.prototype.turnNext = function () {
 	this.checkNotCurPlayerAblePeng();
 	this.checkNotCurPlayerAbleGang();
+	this.checkNotCurPlayerAbleHu();
 	if (this.insert_list.length > 0) {
 		this.waitPlayerAction();
 		return;
@@ -164,8 +173,14 @@ GameMain.prototype.turnNextPlayer = function () {
 		this.GAME_STATE = "GAME_WAIT";
 	} else {
 		this.dealCardToPlayer(_name);
+		// this.checkCurPlayerAbleHu();
 	}
 };
+// GameMain.prototype.checkCurPlayerAbleHu = function(){
+// 	var cardList = this.playerList[this.curPlayerIndex].cardList;
+// 	var result = this.machine.hu(cardList);
+// 	return result;
+// }
 GameMain.prototype.dealCardToPlayer = function (username) {
 	var _player = this.getPlayerByName(username);
 	var card = this.cardBox.dealCards(1);
@@ -256,6 +271,34 @@ GameMain.prototype.peng = function (name) {
 		});
 	} else {
 		_player.socket.emit('peng', {
+			result: -1,
+			msg: 'card check error'
+		});
+	}
+};
+GameMain.prototype.hu = function (name){
+	var _player = this.getPlayerByName(name);
+	if (this.GAME_STATE == 'GAME_WAIT' && this.record_player && this.record_player.username != name) {
+		console.log('game state :wait');
+		_player.socket.emit('hu', {
+			result: -1,
+			msg: 'error : game state wait!'
+		});
+		return;
+	}
+	this.record_player = null;
+	var result = this.checkHu(_player);
+	if(result){
+		this.GAME_STATE = "GAME_START";
+		this.clearInsertList();
+		_player.socket.emit('hu', {
+			result: 0,
+			winner:_player.username
+		});
+		_player.socket.broadcast.to(this.roomId).emit('game end',{result:0,winner:_player.username});
+		this.endGame();
+	}else {
+		_player.socket.emit('hu', {
 			result: -1,
 			msg: 'card check error'
 		});
@@ -368,6 +411,30 @@ GameMain.prototype.checkNotCurPlayerAbleGang = function () {
 		}
 	}
 };
+GameMain.prototype.checkNotCurPlayerAbleHu = function(){
+	var checkList = [];
+	var tempList = this.playerList;
+	var a_arr = tempList.slice(this.curPlayerIndex, this.playerList.length);
+	var b_arr = tempList.slice(0, this.curPlayerIndex);
+	checkList = a_arr.concat(b_arr);
+
+	for (var i = 0; i < checkList.length; i++) {
+		var _result = this.checkHu(checkList[i]);
+		if (_result) {
+			// checkList[i].onlyPeng = true;
+			console.log('_result:', _result, checkList[i]);
+			this.insert_list.push({
+				result: _result,
+				player: checkList[i]
+			});
+		}
+	}
+};
+GameMain.prototype.checkHu = function(_player){
+	var result = null;
+	result = this.machine.hu(_player.cardList);
+	return result;
+};
 GameMain.prototype.checkGang = function (_player) {
 	var result = null;
 	var card_name = this.table.lastCard();
@@ -377,10 +444,6 @@ GameMain.prototype.checkGang = function (_player) {
 			result = _result.result;
 		}
 	}
-	return result;
-};
-GameMain.prototype.checkHu = function () {
-	var result = true;
 	return result;
 };
 GameMain.prototype.wait = function () {

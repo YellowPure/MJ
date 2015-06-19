@@ -72,6 +72,7 @@ Table.prototype.initControls = function() {
 	});
 	this.initControl_items('hu', 3, function(ev) {
 		console.log('hu');
+		socket.emit('hu');
 	});
 	this.initControl_items('guo', 4, function(ev) {
 		console.log('guo');

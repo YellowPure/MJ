@@ -1,5 +1,5 @@
 var Machine = {
-	checkArrIsEqual: function (array) {
+	checkArrIsEqual: function(array) {
 		var same = true;
 		for (var index = 0; index < array.length; index++) {
 			var element = array[index];
@@ -11,27 +11,27 @@ var Machine = {
 		// console.log('same',same);
 		return same;
 	},
-	getTypeByMatchArr: function (array) {
+	getTypeByMatchArr: function(array) {
 		var arr = [];
 		if (Object.prototype.toString.call(array) === "[object Array]") {
-			array.forEach(function (val) {
+			array.forEach(function(val) {
 				arr.push(val.split('_')[1]);
 			});
 		}
 		return arr;
 	},
-	getNumsByMatchArr: function (array) {
+	getNumsByMatchArr: function(array) {
 		var arr = [];
 		if (Object.prototype.toString.call(array) === "[object Array]") {
-			array.forEach(function (val) {
+			array.forEach(function(val) {
 				arr.push(val.split('_')[0]);
 			})
 		}
 		return arr;
 	},
-	chi: function (card_list, match_card) {
+	chi: function(card_list, match_card) {
 		var self = this;
-		var check_three_card = function (card_one, card_two, card_three) {
+		var check_three_card = function(card_one, card_two, card_three) {
 			var _result = null;
 			var match_arr = [card_one, card_two, card_three];
 			var type_arr = self.getTypeByMatchArr(match_arr);
@@ -66,7 +66,7 @@ var Machine = {
 		var match_type = match_card.split('_')[1];
 		var _arr = [];
 		var two_card_arr = [];
-		card_list.forEach(function (ele) {
+		card_list.forEach(function(ele) {
 			var _type = ele.split('_')[1];
 			if (_type == match_type) {
 				_arr.push(ele);
@@ -90,13 +90,13 @@ var Machine = {
 		// console.log('check chi result',result);
 		return result;
 	},
-	peng: function (card_list, match_card) {
+	peng: function(card_list, match_card) {
 		var self = this;
 		var result = null;
 		var match_type = match_card.split('_')[1];
 		var _arr = [];
 		var two_card_arr = [];
-		card_list.forEach(function (ele) {
+		card_list.forEach(function(ele) {
 			var _type = ele.split('_')[1];
 			if (_type == match_type) {
 				_arr.push(ele);
@@ -117,7 +117,7 @@ var Machine = {
 		}
 		return result;
 	},
-	check_peng: function (card_one, card_two, match_card) {
+	check_peng: function(card_one, card_two, match_card) {
 		var result = null;
 		var match_arr = [match_card, card_one, card_two];
 		var type_arr = this.getTypeByMatchArr(match_arr);
@@ -130,7 +130,7 @@ var Machine = {
 		}
 		return result;
 	},
-	gang: function (card_list, match_card) {
+	gang: function(card_list, match_card) {
 		var result = null;
 		var type = null;
 		//先check card_list中是否满足条件
@@ -147,9 +147,12 @@ var Machine = {
 			result = result2;
 			type = 2;
 		}
-		return { result: result, type: type };
+		return {
+			result: result,
+			type: type
+		};
 	},
-	check_table_gang: function (card_list, match_card) {
+	check_table_gang: function(card_list, match_card) {
 		var result = null;
 		var _typeObj = {};
 		var match_type = match_card.split('_')[1];
@@ -169,7 +172,7 @@ var Machine = {
 		}
 		return result;
 	},
-	check_player_list_gang: function (card_list) {
+	check_player_list_gang: function(card_list) {
 		var result = null;
 		var _typeObj = {};
 		// console.log('card_list',card_list);
@@ -211,7 +214,7 @@ var Machine = {
 
 		return result;
 	},
-	check_gang: function (arr) {
+	check_gang: function(arr) {
 		var result = null;
 		var same_num = this.checkArrIsEqual(arr);
 
@@ -220,24 +223,49 @@ var Machine = {
 		}
 		return result;
 	},
-	hu: function (card_list) {
+	hu: function(card_list) {
 		var result = null;
-		var check_duizi = this.check_duizi(card_list);
-		
-		return result;
-	},
-	check_hu: function () {
-		var wan_arr = this.getTypesByList('wan');
-		var feng_arr = this.getTypesByList('f');
-		var o_arr = this.getTypesByList('o');
-		var tiao_arr = this.getTypesByList('tiao');
-		var tong_arr = this.getTypesByList('tong');
+		var wan_arr = this.getTypesByList('wan', card_list);
+		var feng_arr = this.getTypesByList('f', card_list);
+		var o_arr = this.getTypesByList('o', card_list);
+		var tiao_arr = this.getTypesByList('tiao', card_list);
+		var tong_arr = this.getTypesByList('tong', card_list);
 
+		/*
+		 * @info {duizi:[],shunzi:[],juzi:[]}
+		 */
 		var wan_info = this.getInfoByList(wan_arr);
+		var feng_info = this.getInfoByList(feng_arr);
+		var o_info = this.getInfoByList(o_arr);
+		var tiao_info = this.getInfoByList(tiao_arr);
+		var tong_info = this.getInfoByList(tong_arr);
+
+
+		var duizi_count = wan_info['duizi'].length + feng_info['duizi'].length + o_info['duizi'].length + tiao_info['duizi'].length + tong_info['duizi'].length;
+		var juzi_count = wan_info['juzi'].length + feng_info['juzi'].length + o_info['juzi'].length + tiao_info['juzi'].length + tong_info['juzi'].length;
+		var shunzi_count = wan_info['shunzi'].length + tiao_info['shunzi'].length + tong_info['shunzi'].length;
+
+		// console.log('duizi_count,juzi_count,shunzi_count', duizi_count, juzi_count, shunzi_count);
+
+		if (duizi_count == 1 && (juzi_count + shunzi_count) == 3) {
+			result = true;
+		}
+
+		return true;
 	},
-	getTypesArrByList: function (type) {
+	getTypesByList: function(type, card_list) {
 		var arr = [];
-		this.card_list.forEach(function (val, index) {
+		card_list.forEach(function(ele) {
+			var tp = ele.split('_')[1];
+			if (tp == type) {
+				arr.push(ele);
+			}
+		});
+		return arr;
+	},
+	getTypesArrByList: function(type) {
+		var arr = [];
+		this.card_list.forEach(function(val, index) {
 			var tp = val.split('_')[1];
 			if (tp == type) {
 				arr.push(val);
@@ -245,19 +273,25 @@ var Machine = {
 		});
 		return arr;
 	},
-	getInfoByList: function (list) {
+	getInfoByList: function(list) {
 		var obj = {};
+		obj['duizi'] = new Array();
+		obj['shunzi'] = new Array();
+		obj['juzi'] = new Array();
 		if (list.length) {
-			obj['duizi'] = this.check_duizi(list);
 			obj['juzi'] = this.check_juzi(list);
-
+		}
+		if (list.length) {
 			if (list[0].split('_')[1] != 'o' || list[0].split('_')[1] != 'f') {
 				obj['shunzi'] = this.check_shunzi(list);
 			}
 		}
+		if (list.length) {
+			obj['duizi'] = this.check_duizi(list);
+		}
 		return obj;
 	},
-	check_duizi: function (array) {
+	check_duizi: function(array) {
 		var dui_arr = [];
 
 		if (array.length >= 2) {
@@ -266,6 +300,7 @@ var Machine = {
 				var ele = array[i];
 				var ele1 = array[i + 1];
 				if (ele == ele1) {
+					array.splice(i, 2);
 					dui_arr.push([ele, ele]);
 					i++;
 				}
@@ -274,7 +309,7 @@ var Machine = {
 
 		return dui_arr;
 	},
-	check_juzi: function (array) {
+	check_juzi: function(array) {
 		var juzi_arr = [];
 		if (array.length >= 3) {
 			array.sort();
@@ -282,7 +317,8 @@ var Machine = {
 				var element = array[index];
 				var element1 = array[index + 1];
 				var element2 = array[index + 2];
-				if (element == element1 == element2) {
+				if (element == element1 && element1 == element2) {
+					array.splice(index, 3);
 					juzi_arr.push([element, element, element]);
 					index += 2;
 				}
@@ -291,21 +327,22 @@ var Machine = {
 
 		return juzi_arr;
 	},
-	check_shunzi: function (array) {
+	check_shunzi: function(array) {
 		var shunzi_arr = [];
 		var nums_arr = [];
 		if (array.length >= 3) {
 			array.sort();
-			array.forEach(function (val, index) {
+			array.forEach(function(val, index) {
 				nums_arr.push(val.split('_')[0]);
 			});
 			for (var index = 0; index < nums_arr.length; index++) {
-				var element = nums_arr[index];
-				var element1 = nums_arr[index + 1];
-				var element2 = nums_arr[index + 2];
+				var element = parseInt(nums_arr[index]);
+				var element1 = parseInt(nums_arr[index + 1]);
+				var element2 = parseInt(nums_arr[index + 2]);
 				if (element1 == (element + 1) && element2 == (element1 + 1)) {
 					index += 2;
-					shunzi_arr.push([element, element1, element2]);
+					shunzi_arr.push([array[index], array[index+1], array[index+2]]);
+					array.splice(index, 3);
 				}
 			}
 		}

@@ -178,6 +178,22 @@ var main = {
 		socket.on('table remove card',function(data){
 			Global.table.tableRemoveCard(data.table_card);
 		});
+		socket.on('hu',function(){
+			if(data.result == 0){
+				self.showWinnerPop(data.winner);
+				$('#game_view').hide();
+			}
+		});
+		socket.on('game end',function(data){
+			if(data.result == 0){
+				self.showWinnerPop(data.winner);
+				$('#game_view').hide();
+			}
+		})
+	},
+	showWinnerPop:function(name){
+		$('#winner_pop').show(200);
+		$('#winner_name').text(name);
 	},
 	updatePlayerShow: function(list) {
 		Global.player_name_list = list;

@@ -14,16 +14,15 @@ app.use(express.static(__dirname + '/public'));
 var rooms= {};
 var cardBoxs = {};
 var Room=require('./Room');
-
+Global.rooms = rooms;
 //game main
 var usernames = {};
 var numUsers = 0;
 
 var roomIdPool = [];
-var MJList = require('./CardBox');
-
 io.on('connection', function (socket) {
 	var addUsers = false;
+
 	console.log('connection success!', Global.io.sockets.sockets.length);//,io.sockets.sockets,socket.id);
 	//	global.sockets=io.sockets.sockets;
 	socket.on('new message', function (data) {
@@ -44,7 +43,6 @@ io.on('connection', function (socket) {
 		//判断当前房间中是否有重复名称的玩家
 		if(rooms[curRoomId].checkSameUsername() == false){
 			rooms[curRoomId].addPlayer(socket,username);
-			
 			
 			socket.join(curRoomId);
 			console.log('socket join room:', socket.rooms);
@@ -141,6 +139,10 @@ io.on('connection', function (socket) {
 	socket.on('guo', function(){
 		console.log('guo');
 		rooms[socket.roomId].gameMain.guo(socket.username);
+	});
+	socket.on('hu', function(){
+		console.log('hu');
+		rooms[socket.roomId].gameMain.hu(socket.username);
 	});
 });
 
