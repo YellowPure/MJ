@@ -54,7 +54,8 @@ GameMain.prototype.dealCardsToPlayers = function () {
 	});
 };
 GameMain.prototype.getThrowCard = function (cardName, socket) {
-	console.log('gameMain get throw Card');
+	console.log('gameMain get throw Card',this.GAME_STATE );
+    
 	var _player = this.getPlayerByName(socket.username);
 	var _index = _player.cardList.indexOf(cardName);
 	if (_player.username != this.playerList[this.curPlayerIndex].username) {
@@ -92,28 +93,34 @@ GameMain.prototype.getThrowCard = function (cardName, socket) {
 		card_name: cardName
 	});
 	this.table.addCard(cardName);
-
 	this.turnNext();
 };
 GameMain.prototype.turnNext = function () {
 	this.checkNotCurPlayerAblePeng();
+	console.log('this.insert_list.length1',this.insert_list.length);
 	this.checkNotCurPlayerAbleGang();
+	console.log('this.insert_list.length2',this.insert_list.length);
 	this.checkNotCurPlayerAbleHu();
+	console.log('this.insert_list.length3',this.insert_list.length);
 	if (this.insert_list.length > 0) {
 		this.waitPlayerAction();
 		return;
 	}
+	console.log('turn next player');
 	this.turnNextPlayer();
 };
 GameMain.prototype.clearInsertList = function () {
 	this.insert_list = [];
 };
 GameMain.prototype.waitPlayerAction = function () {
+    
 	this.curPlayerIndex = this.playerList.indexOf(this.insert_list[0].player);
 	this.record_player = this.playerList[this.curPlayerIndex];
+	console.log(this.insert_list[0]['player'].username,"is next player");
 	this.insert_list[0]['player'].socket.emit('player turn', {
 		index: this.curPlayerIndex
 	});
+    console.log('change game state');
 	this.GAME_STATE = "GAME_WAIT";
 	this.insert_list[0]['player'].socket.broadcast.emit('wait player', {
 		username: this.insert_list[0].username
@@ -133,7 +140,6 @@ GameMain.prototype.guo = function (username) {
 	// this.checkAllPlayerAblePeng();
 	// //有玩家可以抢碰牌桌中的牌
 	// if (this.insert_list.length > 0) {
-	// 	this.waitPlayerAction();
 	// } else {
 	// 	this.curPlayerIndex = this.playerList.indexOf(this.record_player);
 	// 	this.turnNextPlayer(this.record_player.username);
@@ -162,10 +168,11 @@ GameMain.prototype.turnNextPlayer = function () {
 	this.curPlayerIndex = nextIndex;
 
 	var _name = this.playerList[nextIndex].username;
+	console.log(_name,"is next player1");
 	Global.io.to(this.roomId).emit('player turn', {
 		name: _name
 	});
-	//检查下一位操作玩家是否可吃牌 如可吃 不发牌
+	//检查下一位操作玩家是否可吃牌 如可吃 不发牌  有bug
 	var chi_result = this.machine.chi(this.playerList[this.curPlayerIndex].cardList, this.table.lastCard());
 	// console.log('this.playerList[this.curPlayerIndex]', this.playerList[this.curPlayerIndex].username);
 	if (chi_result) {
@@ -295,7 +302,7 @@ GameMain.prototype.hu = function (name){
 			result: 0,
 			winner:_player.username
 		});
-		_player.socket.broadcast.to(this.roomId).emit('game end',{result:0,winner:_player.username});
+		Global.io.to(this.roomId).emit('game end',{result:0,winner:_player.username});
 		this.endGame();
 	}else {
 		_player.socket.emit('hu', {
@@ -374,7 +381,6 @@ GameMain.prototype.gang = function (name) {
 GameMain.prototype.checkNotCurPlayerAblePeng = function () {
 	// var results = [];
 	var checkList = [];
-	// console.log('checkNotCurPlayerAblePeng::', this.curPlayerIndex);
 	var tempList = this.playerList;
 	var a_arr = tempList.slice(this.curPlayerIndex, this.playerList.length);
 	var b_arr = tempList.slice(0, this.curPlayerIndex);
@@ -384,7 +390,7 @@ GameMain.prototype.checkNotCurPlayerAblePeng = function () {
 		var _result = this.checkPeng(checkList[i]);
 		if (_result) {
 			// checkList[i].onlyPeng = true;
-			console.log('_result:', _result, checkList[i]);
+			// console.log('_result:', _result, checkList[i]);
 			this.insert_list.push({
 				result: _result,
 				player: checkList[i]
@@ -403,7 +409,7 @@ GameMain.prototype.checkNotCurPlayerAbleGang = function () {
 		var _result = this.checkGang(checkList[i]);
 		if (_result) {
 			// checkList[i].onlyPeng = true;
-			console.log('_result:', _result, checkList[i]);
+			// console.log('_result:', _result, checkList[i]);
 			this.insert_list.push({
 				result: _result,
 				player: checkList[i]
@@ -422,7 +428,7 @@ GameMain.prototype.checkNotCurPlayerAbleHu = function(){
 		var _result = this.checkHu(checkList[i]);
 		if (_result) {
 			// checkList[i].onlyPeng = true;
-			console.log('_result:', _result, checkList[i]);
+			// console.log('_result:', _result, checkList[i]);
 			this.insert_list.push({
 				result: _result,
 				player: checkList[i]

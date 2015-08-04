@@ -26,7 +26,7 @@ io.on('connection', function (socket) {
 	console.log('connection success!', Global.io.sockets.sockets.length);//,io.sockets.sockets,socket.id);
 	//	global.sockets=io.sockets.sockets;
 	socket.on('new message', function (data) {
-		console.log(data, 'get message');
+		// console.log(data, 'get message');
 		io.to(data.roomId).emit('new message', {
 			username: socket.username,
 			message: data.msg
@@ -45,7 +45,7 @@ io.on('connection', function (socket) {
 			rooms[curRoomId].addPlayer(socket,username);
 			
 			socket.join(curRoomId);
-			console.log('socket join room:', socket.rooms);
+			// console.log('socket join room:', socket.rooms);
 			socket.roomId = curRoomId;
 			socket.username = username;
 //			addPlayersToRoom(curRoomId, username);

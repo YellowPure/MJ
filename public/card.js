@@ -14,7 +14,7 @@ function Card(option) {
 	this.str_size=parseInt(this.width*14/53);
 	this.text=new createjs.Text(str,this.str_size+"px Microsoft Yahei", "#ff7000");
 	//text 换行需要在文本中加入空格
-	this.text.lineWidth = this.width;
+    this.text.lineWidth = this.width;
 	this.text.y=10;
 	this.text.visible=false;
 	this.card_view.addChild(this.bg);
@@ -59,7 +59,6 @@ Card.prototype.bindEvent = function() {
 				y: self.y-10},100
 			);
 		}
-		
 	});
 	this.card_view.addEventListener('rollout',function(event){
 		if(self.side==1){

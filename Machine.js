@@ -165,6 +165,9 @@ var Machine = {
 			if (eleType == match_type && eleNum == match_num) {
 				player_match_arr.push(ele);
 			}
+			if(!_typeObj[eleType]){
+				_typeObj[eleType] = new Array();
+			}
 			_typeObj[eleType].push(ele);
 		};
 		if (player_match_arr.length == 4) {
@@ -250,8 +253,8 @@ var Machine = {
 		if (duizi_count == 1 && (juzi_count + shunzi_count) == 3) {
 			result = true;
 		}
-
-		return true;
+        //debug game start
+		return result;
 	},
 	getTypesByList: function(type, card_list) {
 		var arr = [];

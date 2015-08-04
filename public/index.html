@@ -1,80 +1,98 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset='utf-8'>
-	<link rel="stylesheet" type="text/css" href="main.css">
-	<script type="text/javascript" src='../socket.io/socket.io.js'></script>
-	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-	<script type="text/javascript" src="https://code.createjs.com/createjs-2014.12.12.min.js"></script>
-	<title>MJ</title>
-    <style>
-      
-    </style>
-</head>
-<body>
-<article class='pages'>
-	<div class="login page">
-		<div class="form">
-			<h3>input a nickame</h3>
-			<input type='text' autofocus id='nickname'  maxlength="14">
-		</div>
-	</div>
-	<div class="game page">
-		<div class="game_main">
-			<div class="player1 player">
-				<ul>
-					<li>玩家一：<span class='name'></span></li>
-					<li><button class="ready">准备</button><button class="not_ready">取消准备</button></li>
-				</ul>
+	<head>
+		<meta charset='utf-8'>
+		<link rel="stylesheet" type="text/css" href="main.css">
+		<script type="text/javascript" src='../socket.io/socket.io.js'></script>
+		<!-- 新 Bootstrap 核心 CSS 文件 -->
+		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+		<script src="jquery-1.11.1.js"></script>
+		<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+		<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://code.createjs.com/createjs-2014.12.12.min.js"></script>
+		<title>MJ</title>
+	</head>
+	<body>
+		<article class='pages'>
+			<div class="login page">
+				<div class="form">
+					<h3>input a nickame</h3>
+					<input type='text' autofocus id='nickname' maxlength="14">
+				</div>
 			</div>
-			<div class="player2 player">
-				<ul>
-					<li>玩家二：<span class='name'></span></li>
-					<li class="ready_info"></li>
-					<!-- <li><button class="ready">准备</button><button class="not_ready">取消准备</button></li> -->
-				</ul>
-
-			</div>
-			<div class="player3 player">
-				<ul>
-					<li>玩家三：<span class='name'></span></li>
-					<li class="ready_info"></li>
-					<!-- <li><button class="ready">准备</button><button class="not_ready">取消准备</button></li> -->
-				</ul>
-
-			</div>
-			<div class="player4 player">
-				<ul>
-					<li>玩家四：<span class='name'></span></li>
-					<li class="ready_info"></li>
-					<!-- <li><button class="ready">准备</button><button class="not_ready">取消准备</button></li> -->
-				</ul>
-			</div>
-<!--			<div id="action_box">
+			<div class="game page">
+				<div class="game_main">
+					<div class="player1 player">
+						<ul>
+							<li>玩家一：
+								<span class='name'></span>
+							</li>
+							<li>
+								<button class="ready btn btn-default">准备</button>
+								<button class="not_ready btn btn-default">取消准备</button>
+							</li>
+						</ul>
+					</div>
+					<div class="player2 player">
+						<ul>
+							<li>玩家二：
+								<span class='name'></span>
+							</li>
+							<li class="ready_info"></li>
+							<!-- <li><button class="ready">准备</button><button class="not_ready">取消准备</button></li> -->
+						</ul>
+					</div>
+					<div class="player3 player">
+						<ul>
+							<li>玩家三：
+								<span class='name'></span>
+							</li>
+							<li class="ready_info"></li>
+							<!-- <li><button class="ready">准备</button><button class="not_ready">取消准备</button></li> -->
+						</ul>
+					</div>
+					<div class="player4 player">
+						<ul>
+							<li>玩家四：
+								<span class='name'></span>
+							</li>
+							<li class="ready_info"></li>
+							<!-- <li><button class="ready">准备</button><button class="not_ready">取消准备</button></li> -->
+						</ul>
+					</div>
+					<!-- <div id="action_box">
 				<button>吃</button>
 				<button>碰</button>
 				<button>gang</button>
 				<button>hu</button>
-			</div>-->
+			</div>--></div>
+				<div class="chat">
+					<ul id="messages"></ul>
+					<form class="chat_form" action="">
+						<input id="m" autocomplete="off" />
+						<button>Send</button>
+					</form>
+				</div>
+				<canvas id="game_view"></canvas>
+			</div>
+		</article>
+		<div id='pop' style="display:none;">
+			<div class="pop-content">
+				<h1>胜利者是：
+					<span id="winner_name"></span>
+				</h1>
+				<button id='restart-btn' class="btn btn-default">重新开始</button>
+			</div>
+			<span class="mid-help"></span>
 		</div>
-		<div class="chat">
-			<ul id="messages"></ul>
-		    <form class="chat_form" action="">
-		      <input id="m" autocomplete="off" /><button>Send</button>
-		    </form>
-		</div>
-		<canvas id="game_view"></canvas>
-	</div>
-	
-</article>
-<div id='winner_pop' style="display:none;">
-	<h1>胜利者是：<span id="winner_name"></span></h1>
-</div>
-<script type="text/javascript" src="img_url_dic.js"></script>
-<script type="text/javascript" src='main.js'></script>
-<script type="text/javascript" src="game_data.js"></script>
-<script type="text/javascript" src="table.js"></script>
-<script type="text/javascript" src="card.js"></script>
-<script type="text/javascript" src='game_view.js'></script>
-</body>
+		<script type="text/javascript" src="img_url_dic.js"></script>
+		<script type="text/javascript" src='main.js'></script>
+		<script type="text/javascript" src="game_data.js"></script>
+		<script type="text/javascript" src="table.js"></script>
+		<script type="text/javascript" src="card.js"></script>
+		<script type="text/javascript" src='game_view.js'></script>
+	</body>
+
 </html>

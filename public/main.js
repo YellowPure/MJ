@@ -18,6 +18,7 @@ var main = {
 		this.bindEvent();
 	},
 	bindEvent: function() {
+		var _this = this;
 		$('form.chat_form').submit(function(e) {
 			// e.preventDefault();
 			socket.emit('new message', {
@@ -47,6 +48,15 @@ var main = {
 				username: Global.username,
 				roomId: Global.roomId
 			});
+		});
+		$('#restart-btn').on('click',function(e){
+			$('.game_main').css('visibility','visible');
+			socket.emit('not ready', {
+				username: Global.username,
+				roomId: Global.roomId
+			});
+			$('.player1').show(200);
+			_this.hideWinnerPop();
 		});
 		this.bindSocketEvent();
 	},
@@ -115,6 +125,7 @@ var main = {
 			$('#game_view').show();
 			$('.player1').hide(200);
 			view.init();
+            
 			game_data.setCardData(data.card_list);
 			view.countDown(function() {
 				view.table.dealCards();
@@ -178,22 +189,29 @@ var main = {
 		socket.on('table remove card',function(data){
 			Global.table.tableRemoveCard(data.table_card);
 		});
-		socket.on('hu',function(){
-			if(data.result == 0){
-				self.showWinnerPop(data.winner);
-				$('#game_view').hide();
-			}
+		socket.on('hu',function(data){
+			// if(data.result == 0){
+			// 	self.showWinnerPop(data.winner);
+			// 	$('#game_view').hide();
+			// }
 		});
 		socket.on('game end',function(data){
+			console.log('game end');
 			if(data.result == 0){
 				self.showWinnerPop(data.winner);
 				$('#game_view').hide();
+				$('.game_main').css('visibility','hidden');
+                Global.table.player_cards_list = [];
+                game_data.player_card_list = [];
 			}
 		})
 	},
 	showWinnerPop:function(name){
-		$('#winner_pop').show(200);
+		$('#pop').show(200);
 		$('#winner_name').text(name);
+	},
+	hideWinnerPop:function(){
+		$('#pop').hide(200);
 	},
 	updatePlayerShow: function(list) {
 		Global.player_name_list = list;

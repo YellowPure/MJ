@@ -201,11 +201,13 @@ Table.prototype.playerAddCards = function(card_list) {
 Table.prototype.throwListAddCard = function(card_name) {
 	var _index;
 	var _card = null;
-
+    console.log(this.table_show_view.getBounds());
+    var _y = this.throw_card_list.length>15? this.last_pos.y+this.row_card_height:this.last_pos.y;
+    var _x = this.throw_card_list.length>15? this.row_card_width * (this.throw_card_list.length-15):this.row_card_width * this.throw_card_list.length;
 	_card = new Card({
 		name: 'card_0',
 		x: this.row_card_width * this.throw_card_list.length,
-		y: this.last_pos.y,
+		y: _y,
 		card_id: 0,
 		txt: card_name,
 		side: 1
