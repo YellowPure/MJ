@@ -23,7 +23,7 @@ function Table() {
 	this.table_view.addChild(this.table_show_view);
 	this.table_player_view = new createjs.Container();
 	this.table_player_view.y = Global.canvas.height - this.row_card_height;
-	this.table_player_view.x = (Global.canvas.width - this.row_card_width * 13) / 2;
+	this.table_player_view.x = (Global.canvas.width - this.row_card_width * 14) / 2;
 
 	this.sub_list = [];
 	this.table_view.addChild(this.table_player_view);
@@ -51,7 +51,7 @@ Table.prototype.init = function() {
 Table.prototype.initControls = function() {
 	var self = this;
 	this.control_view = new createjs.Container();
-	this.control_view.x = parseInt(Global.canvas.width - 4 * self.row_card_width);
+	this.control_view.x = parseInt(Global.canvas.width - 5 * self.row_card_width);
 	this.control_view.y = parseInt(Global.canvas.height * 9 / 10);
 	this.table_view.addChild(this.control_view);
 

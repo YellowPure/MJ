@@ -39,7 +39,7 @@ CardBox.prototype.randomList = function() {
 	var arr = this.list;
 	var arr1 = [];
 	while (arr.length > 0) {
-		var random_index = parseInt(Math.random() * arr.length);
+		var random_index = parseInt(Math.random() * arr.length,10);
 		arr1.push(arr[random_index]);
 		arr.splice(random_index, 1);
 	}

@@ -63,6 +63,9 @@ var Machine = {
 		};
 
 		var result = null;
+        if(!match_card){
+            return result;
+        }
 		var match_type = match_card.split('_')[1];
 		var _arr = [];
 		var two_card_arr = [];
@@ -93,6 +96,9 @@ var Machine = {
 	peng: function(card_list, match_card) {
 		var self = this;
 		var result = null;
+        if(!match_card){
+            return result;
+        }
 		var match_type = match_card.split('_')[1];
 		var _arr = [];
 		var two_card_arr = [];
@@ -132,6 +138,7 @@ var Machine = {
 	},
 	gang: function(card_list, match_card) {
 		var result = null;
+        if(!match_card){return result;}
 		var type = null;
 		//先check card_list中是否满足条件
 		var result1 = this.check_player_list_gang(card_list);

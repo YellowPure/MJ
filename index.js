@@ -121,7 +121,7 @@ io.on('connection', function (socket) {
 	socket.on('throw', function (data) {
 		console.log('throw!');
 		if (data.card_name) {
-			rooms[socket.roomId].gameMain.getThrowCard(data.card_name,socket);
+			rooms[socket.roomId].gameMain.throwCard(data.card_name,socket);
 		}
 	});
 	socket.on('chi', function () {
